@@ -21,9 +21,16 @@ vx <- velox(st_raw)
 
 temps <- vx$extract(sp=blocks$geometry)
 
+
+
 blocks$temps <- temps
 blocks$mean_temp <- sapply(blocks$temps, mean)
-#blocks$mean_temp <- blocks$mean_temp/100
+blocks$max_temp <- sapply(blocks$temps, max)
+blocks$min_temp <- sapply(blocks$temps, min)
+blocks$mean_temp <- ifelse(is.na(blocks$mean_temp), blocks$mean_temp, blocks$mean_temp/100)
+blocks$max_temp <- ifelse(is.na(blocks$max_temp), blocks$max_temp, blocks$max_temp/100)
+blocks$min_temp <- ifelse(is.na(blocks$min_temp), blocks$min_temp, blocks$min_temp/100)
+blocks <- st_transform(blocks, crs = 4326)
 blocks_for_csv <- blocks
 blocks_for_csv$temps <- NULL
 blocks_for_csv$geometry <- NULL
@@ -42,8 +49,8 @@ tracts$mean_temp <- sapply(tracts$temps, mean)
 tracts$max_temp <- sapply(tracts$temps, max)
 tracts$min_temp <- sapply(tracts$temps, min)
 tracts$mean_temp <- tracts$mean_temp/100
-tracts$mean_temp <- tracts$max_temp/100
-tracts$mean_temp <- tracts$min_temp/100
+tracts$max_temp <- tracts$max_temp/100
+tracts$min_temp <- tracts$min_temp/100
 tracts_for_csv <- tracts
 
 
@@ -59,23 +66,26 @@ write_csv(tracts_for_csv, 'tract_temps.csv')
 #map tract level
 
 
-ar_norm_sta_pal <- colorQuantile(
-  palette = "Purples",
-  domain = ship_norm$sta_norm_ar,
+blocks_heat_pal <- colorQuantile(
+  palette = "Oranges",
+  domain = blocks$mean_temp,
   n = 5)
 
-ar_norm_pop <- paste0(ar_norm_res_frt_tr_pop, "<br>", ar_norm_comm_frt_svc_pop,
-                      "<br>", ar_norm_sta_pop, "<br>", ar_norm_tot_pop)
+blocks_pop <- paste0('Mean Temperature: ', blocks$mean_temp, "<br>",
+                     'Max Temperature: ', blocks$max_temp, "<br>",
+                     'Min Temperature: ', blocks$min_temp, "<br>")
 
-leaflet(tracts) %>% 
+m <- leaflet(blocks) %>% 
   addProviderTiles('CartoDB.Positron') %>% 
-  addPolygons(fillColor = ~ar_norm_res_frt_tr_pal(ship_norm$res_frt_tr_norm_ar),
+  addPolygons(fillColor = ~blocks_heat_pal(blocks$mean_temp),
               weight = 0,
-              group = 'Residential',
               fillOpacity = .9,
-              popup = ~ar_norm_pop) %>% 
+              popup = ~blocks_pop) %>% 
+  addLegend('topleft', pal = blocks_heat_pal,
+            values = blocks$mean_temp,
+            title = 'Mean Temperature Quantiles per Census Block')
 
-
+m
 
 mean(temps[[1]])
 mean(blocks$temps[[1]])

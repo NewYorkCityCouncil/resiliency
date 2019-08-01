@@ -6,11 +6,12 @@ library(sf)
 
 
 
-rstr_may=raster('LC08_CU_029007_20190526_20190607_C01_V01_ST/LC08_CU_029007_20190526_20190607_C01_V01_ST.tif')
 
-str(rstr_may)
 
-rstr_july <- raster('LC08_CU_029007_20190713_20190723_C01_V01_ST.tif')
+rstr_may <- raster('lidar_rasters/LC08_CU_029007_20190526_20190607_C01_V01_ST.tif')
+rstr_june <- raster('lidar_rasters/LE07_CU_029007_20190626_20190724_C01_V01_ST.tif')
+rstr_july <- raster('lidar_rasters/LC08_CU_029007_20190713_20190723_C01_V01_ST.tif')
+
 
 #read-in the polygon shapefile
 blocks <- read_sf("2010 Census Blocks/geo_export_2a55aded-68ac-4081-866e-5d019b8fe0f7.shp") %>% 
@@ -18,6 +19,8 @@ blocks <- read_sf("2010 Census Blocks/geo_export_2a55aded-68ac-4081-866e-5d019b8
 
 # tracts <- read_sf('2010 Census Tracts/geo_export_43c9ca4f-b641-4766-a769-a6030c0b8ccf.shp') %>% 
 #   st_transform(., crs(rstr_may))
+
+k_to_f <- function(temp) { fahrenheight <- ((temp - 273) * (9/5)) + 32  }
 
 
 #create function that extracts raster values, joins them to the sf file,
@@ -30,26 +33,29 @@ temp_func <-function(sf, rastername, stringname) {
   max_temp <- paste0('max_temp_', stringname)
   min_temp <- paste0('min_temp_', stringname)
   sf[,mean_temp] <- sapply(temps, mean)
-  sf[,mean_temp] <- sf[,mean_temp]/100
+  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
   sf[,max_temp] <- sapply(temps, max)
-  sf[,max_temp] <- sf[,max_temp]/100
+  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
   sf[,min_temp] <- sapply(temps, min)
-  sf[,min_temp] <- sf[,min_temp]/100
+  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
   sf
 }
 
 
 blocks <- temp_func(blocks, rstr_may, 'may')
+blocks <- temp_func(blocks, rstr_june, 'june')
 blocks <- temp_func(blocks, rstr_july, 'july')
 
 blocks <- blocks %>% 
   mutate(., may_quantile_rank = ntile(blocks$mean_temp_may,5))
 blocks <- blocks %>% 
+  mutate(., june_quantile_rank = ntile(blocks$mean_temp_june,5))
+blocks <- blocks %>% 
   mutate(., july_quantile_rank = ntile(blocks$mean_temp_july,5))
 
 
 #determine how many have changed quintiles
-nrow(blocks[blocks$may_quantile_rank != blocks$july_quantile_rank,])
+nrow(blocks[blocks$may_quantile_rank != blocks$june_quantile_rank,])
 
 #transform crs for mapping, remove na blocks
 #(na blocks only exist because they are so small that they contain less than 
@@ -57,6 +63,7 @@ nrow(blocks[blocks$may_quantile_rank != blocks$july_quantile_rank,])
 # in other blocks, so no information is actually lost.)
 blocks <- st_transform(blocks, crs = 4326)
 blocks <- blocks %>% filter(!is.na(mean_temp_may))
+blocks <- blocks %>% filter(!is.na(mean_temp_june))
 blocks <- blocks %>% filter(!is.na(mean_temp_july))
 
 #remove list columns for csv output
@@ -81,8 +88,9 @@ nta <- read_sf('Neighborhood Tabulation Areas/geo_export_f071572f-4aee-464b-a10a
   select(-one_of(c('boro_code', 'boro_name', 'county_fip', 'shape_leng')))
 
 nta_temps <- st_join(nta, 
-                     blocks[,c('geometry', 'mean_temp_may', 'mean_temp_july', 
-                               'may_quantile_rank', 'july_quantile_rank')],
+                     blocks[,c('geometry', 'mean_temp_may', 'mean_temp_june',
+                               'mean_temp_july', 'may_quantile_rank', 
+                               'june_quantile_rank', 'july_quantile_rank')],
                      join = st_intersects)
 
 nta_temps$count <- 1
@@ -92,18 +100,39 @@ nta_temps$count <- 1
 st_write(nta_temps, 'nta_temps.shp')
 
 
-agg_fun <- function(frame_name, sf, ) {
-  
+
+agg_fun <- function(sf, count_col, quintile_col, nta_col, area_col, string_month) {
+  quintiles <- paste0('quintiles_', string_month)
+  returned <- aggregate(
+    sf[,count_col],
+    by = list(quintiles = sf[,quintile_col],
+              nta = sf[,nta_col],
+              area = sf[,area_col]),
+    function(x) {sum(x)})
+  returned
 }
 
 nta_aggregates <- aggregate(as.numeric(nta_temps$count), by = list(
-  quintiles_may = nta_temps$may_quantile_rank,
+  quintiles_may = ltotal_blocks = nta_temps$may_quantile_rank,
   nta = nta_temps$ntacode,
   area = nta_temps$shape_area), 
   function(x) {sum(x)})
 
+nta_aggregates <- agg_fun(nta_temps, 'count', 'may_quantile_rank', 'ntacode', 'shape_area', 'may')
+
+nrow(!is.na(nta_temps$shape_area))
 
 
+mean_temp <- paste0('mean_temp_', stringname)
+max_temp <- paste0('max_temp_', stringname)
+min_temp <- paste0('min_temp_', stringname)
+sf[,mean_temp] <- sapply(temps, mean)
+sf[,mean_temp] <- sf[,mean_temp]/100
+
+
+
+
+may
 
 #map census block level
 

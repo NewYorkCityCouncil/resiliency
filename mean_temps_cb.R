@@ -1,3 +1,4 @@
+library(tidyverse)
 library(velox)
 library(raster)
 library(leaflet)
@@ -13,16 +14,17 @@ rstr_july <- raster('LC08_CU_029007_20190713_20190723_C01_V01_ST.tif')
 
 #read-in the polygon shapefile
 blocks <- read_sf("2010 Census Blocks/geo_export_2a55aded-68ac-4081-866e-5d019b8fe0f7.shp") %>% 
-  st_transform(., crs(rstr_may))
+  select(-one_of(c('boro_code', 'boro_name', 'cb2010', 'ct2010', 'shape_leng')))
 
 # tracts <- read_sf('2010 Census Tracts/geo_export_43c9ca4f-b641-4766-a769-a6030c0b8ccf.shp') %>% 
 #   st_transform(., crs(rstr_may))
 
 
-
+#create function that extracts raster values, joins them to the sf file,
+#and unlists to calculate mean, min and max
 temp_func <-function(sf, rastername, stringname) {
   rstr <- velox(rastername)
-  st_transform(sf, crs(rastername))
+  sf <- st_transform(sf, crs(rastername))
   temps <- rstr$extract(sp=sf$geometry)
   mean_temp <- paste0('mean_temp_', stringname)
   max_temp <- paste0('max_temp_', stringname)
@@ -36,7 +38,6 @@ temp_func <-function(sf, rastername, stringname) {
   sf
 }
 
-test <- blocks
 
 blocks <- temp_func(blocks, rstr_may, 'may')
 blocks <- temp_func(blocks, rstr_july, 'july')
@@ -47,11 +48,16 @@ blocks <- blocks %>%
   mutate(., july_quantile_rank = ntile(blocks$mean_temp_july,5))
 
 
-
+#determine how many have changed quintiles
 nrow(blocks[blocks$may_quantile_rank != blocks$july_quantile_rank,])
 
-
+#transform crs for mapping, remove na blocks
+#(na blocks only exist because they are so small that they contain less than 
+# half of all surrounding 30sq meter raster points. These points are present
+# in other blocks, so no information is actually lost.)
 blocks <- st_transform(blocks, crs = 4326)
+blocks <- blocks %>% filter(!is.na(mean_temp_may))
+blocks <- blocks %>% filter(!is.na(mean_temp_july))
 
 #remove list columns for csv output
 blocks_for_csv <- blocks
@@ -66,7 +72,40 @@ sum(is.na(blocks$mean_temp_july))
 write_csv(blocks_for_csv, 'block_temps.csv')
 
 
-#map tract level
+
+# add in nta shapefile
+
+nta <- read_sf('Neighborhood Tabulation Areas/geo_export_f071572f-4aee-464b-a10a-e5e5e7be34b2.shp') %>% 
+  janitor::clean_names() %>% 
+  st_transform(., crs(blocks)) %>% 
+  select(-one_of(c('boro_code', 'boro_name', 'county_fip', 'shape_leng')))
+
+nta_temps <- st_join(nta, 
+                     blocks[,c('geometry', 'mean_temp_may', 'mean_temp_july', 
+                               'may_quantile_rank', 'july_quantile_rank')],
+                     join = st_intersects)
+
+nta_temps$count <- 1
+
+
+
+st_write(nta_temps, 'nta_temps.shp')
+
+
+agg_fun <- function(frame_name, sf, ) {
+  
+}
+
+nta_aggregates <- aggregate(as.numeric(nta_temps$count), by = list(
+  quintiles_may = nta_temps$may_quantile_rank,
+  nta = nta_temps$ntacode,
+  area = nta_temps$shape_area), 
+  function(x) {sum(x)})
+
+
+
+
+#map census block level
 
 
 blocks_may_heat_pal <- colorQuantile(

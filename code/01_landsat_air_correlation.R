@@ -67,16 +67,54 @@ shapes <- rbind(lag_shape, cp_shape)
 # Landsat Temps -------------------------------------------------------------
 
 
-raster_test <- raster("data/input/LC08_CU_029007_20140604_20190504_C01_V01_ST.tif")
-
 k_to_f <- function(temp) { fahrenheight <- ((temp - 273) * (9/5)) + 32  }
+
+temp_func <-function(sf, rastername, stringname) {
+  rstr <- velox(rastername)
+  sf <- st_transform(sf, crs(rastername))
+  temps <- rstr$extract(sp=sf$geometry)
+  mean_temp <- paste0('mean_temp_', stringname)
+  max_temp <- paste0('max_temp_', stringname)
+  min_temp <- paste0('min_temp_', stringname)
+  sf[,mean_temp] <- sapply(temps, mean, na.rm = TRUE)
+  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
+  sf[,max_temp] <- sapply(temps, max)
+  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
+  sf[,min_temp] <- sapply(temps, min)
+  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
+  sf
+}
+
+temp_func_2 <-function(rastername) {
+  rstr <- velox(rastername)
+  sf <- st_transform(shapes, crs(rastername))
+  temps <- rstr$extract(sp=sf$geometry)
+  mean_temp <- paste0('mean_temp')
+  max_temp <- paste0('max_temp')
+  min_temp <- paste0('min_temp')
+  sf[,mean_temp] <- sapply(temps, mean, na.rm = TRUE)
+  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
+  sf[,max_temp] <- sapply(temps, max)
+  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
+  sf[,min_temp] <- sapply(temps, min)
+  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
+  sf
+}
 
 
 filenames <- list.files("data/input/landsat_st", pattern="*.tif", full.names=TRUE)
 test_filenames = filenames[1:3]
-ldf <- lapply(test_filenames, raster)
-res <- lapply(ldf, summary)
-names(res) <- substr(test_filenames, 6, 30)
+ldf <- lapply(filenames, raster)
+res <- lapply(ldf, temp_func_2)
+
+dataset_names <- str_extract(str_extract(filenames, pattern ="029007_[0-9]*"), pattern = "_[0-9]*")
+
+# name the dataframes in the list
+names(res) <- dataset_names
+
+#join listed dataframes into single dataframe
+test <- bind_rows(res, .id = "column_label")
+
 
 
 #read in temperature rasters

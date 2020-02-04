@@ -4,7 +4,7 @@ for resiliency sustainability group - looking at heat and flooding areas
 ## Data Structure
 
 - data
--- input
+  - input
 --- Parks Properties
 --- Airport Polygon
 --- landsat_st

@@ -3,6 +3,8 @@ library(velox)
 library(raster)
 library(sf)
 library(leaflet)
+library(XML)
+library(methods)
 
 
 
@@ -108,58 +110,51 @@ raster_shape <- bind_rows(res, .id = "column_label")
 
 # After looking at the raster images themselves, I believe it's because, while
 # they are categorized under NYC, the satelite doesn't actually pass over much 
-# of the city, if any. But they still count
+# of the city, if any. But they still count it as a NYC file. These will be 
+# removed from the analysis
 
 
 
+# raster_test <- raster("data/input/landsat_st/LC08_CU_029007_20140606_20190504_C01_V01_ST.tif")
+# rstr <- velox(raster_test)
+# sf <- st_transform(shapes, crs(raster_test))
+# temps <- rstr$extract(sp=sf$geometry)
+# mean_temp <- paste0('mean_temp_', stringname)
+# max_temp <- paste0('max_temp_', stringname)
+# min_temp <- paste0('min_temp_', stringname)
+# sf$mean <- sapply(temps, mean, na.rm = TRUE)
+# sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
+# sf[,max_temp] <- sapply(temps, max)
+# sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
+# sf[,min_temp] <- sapply(temps, min)
+# sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
+# sf
+
+xmlfilenames <- list.files("data/input/landsat_xml", pattern="*.xml", full.names=TRUE)
+xmldf <- lapply(xmlfilenames, xmlTreeParse)
+xmldf <- lapply(xmldf, xmlRoot)
 
 
+as.POSIXct(trimws(str_replace_all(xmlValue(xmldf[[4]][["tile_metadata"]][["global_metadata"]][["aquisition"]][[1]]), "[A-Z]", " ")))
 
-
-raster_test <- raster("data/input/landsat_st/LC08_CU_029007_20140606_20190504_C01_V01_ST.tif")
-rstr <- velox(raster_test)
-sf <- st_transform(shapes, crs(raster_test))
-temps <- rstr$extract(sp=sf$geometry)
-mean_temp <- paste0('mean_temp_', stringname)
-max_temp <- paste0('max_temp_', stringname)
-min_temp <- paste0('min_temp_', stringname)
-sf$mean <- sapply(temps, mean, na.rm = TRUE)
-sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
-sf[,max_temp] <- sapply(temps, max)
-sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
-sf[,min_temp] <- sapply(temps, min)
-sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
-sf
-
-
-
-#read in temperature rasters
-raster_read <- function(file, string) {
-  name <- paste0('heat/lidar_rasters/', string, '.tif')
-  filename <- paste0('rstr_july_', file)
-  filename <- raster(name)
-  return(filename)
+for (i in 1:length(xmldf)) {
+     print(str_replace_all(xmlValue(xmldf[[i]][["scene_metadata"]][["global_metadata"]][["scene_center_time"]][[1]]), "\\.[0-9A-Z]*", ""))
 }
 
 
-temp_func <-function(sf, rastername, stringname) {
-  rstr <- velox(rastername)
-  sf <- st_transform(sf, crs(rastername))
-  temps <- rstr$extract(sp=sf$geometry)
-  mean_temp <- paste0('mean_temp_', stringname)
-  max_temp <- paste0('max_temp_', stringname)
-  min_temp <- paste0('min_temp_', stringname)
-  sf[,mean_temp] <- sapply(temps, mean, na.rm = TRUE)
-  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
-  sf[,max_temp] <- sapply(temps, max)
-  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
-  sf[,min_temp] <- sapply(temps, min)
-  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
-  sf
-}
 
-landsat <- temp_func(shapes, raster_test, 'test')
 
+test <- xmlParse("data/input/landsat_xml/LC08_CU_029007_20180928_20190614_C01_V01.xml")
+
+
+rootnode <- xmlRoot(test)
+xmlValue(rootnode[[1]][[1]][[9]])
+
+xmlParseString(rootnode[[1]][[1]][[9]])
+
+# Prepare Air Temps for Join ----------------------------------------------
+
+## Aggregate the air temps by day
 cp_avg <- cp_raw %>% 
   filter(date == as.POSIXct("2014-06-04"),
          !is.na(hourly_dry_bulb_temperature))

@@ -69,22 +69,6 @@ shapes <- rbind(lag_shape, cp_shape)
 
 k_to_f <- function(temp) { fahrenheight <- ((temp - 273) * (9/5)) + 32  }
 
-temp_func <-function(sf, rastername, stringname) {
-  rstr <- velox(rastername)
-  sf <- st_transform(sf, crs(rastername))
-  temps <- rstr$extract(sp=sf$geometry)
-  mean_temp <- paste0('mean_temp_', stringname)
-  max_temp <- paste0('max_temp_', stringname)
-  min_temp <- paste0('min_temp_', stringname)
-  sf[,mean_temp] <- sapply(temps, mean, na.rm = TRUE)
-  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
-  sf[,max_temp] <- sapply(temps, max)
-  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
-  sf[,min_temp] <- sapply(temps, min)
-  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
-  sf
-}
-
 temp_func_2 <-function(rastername) {
   rstr <- velox(rastername)
   sf <- st_transform(shapes, crs(rastername))
@@ -101,19 +85,51 @@ temp_func_2 <-function(rastername) {
   sf
 }
 
+#load in all raster files and apply the temp func to get mean, max and min temperatures
+# within the sf geometry
 
 filenames <- list.files("data/input/landsat_st", pattern="*.tif", full.names=TRUE)
 test_filenames = filenames[1:3]
 ldf <- lapply(filenames, raster)
 res <- lapply(ldf, temp_func_2)
 
+#pull out just the date for the names of each dataframe
 dataset_names <- str_extract(str_extract(filenames, pattern ="029007_[0-9]*"), pattern = "_[0-9]*")
 
 # name the dataframes in the list
 names(res) <- dataset_names
 
 #join listed dataframes into single dataframe
-test <- bind_rows(res, .id = "column_label")
+raster_shape <- bind_rows(res, .id = "column_label")
+
+
+
+# a lot of values are coming up as n/a - every third value, in fact.
+
+# After looking at the raster images themselves, I believe it's because, while
+# they are categorized under NYC, the satelite doesn't actually pass over much 
+# of the city, if any. But they still count
+
+
+
+
+
+
+
+raster_test <- raster("data/input/landsat_st/LC08_CU_029007_20140606_20190504_C01_V01_ST.tif")
+rstr <- velox(raster_test)
+sf <- st_transform(shapes, crs(raster_test))
+temps <- rstr$extract(sp=sf$geometry)
+mean_temp <- paste0('mean_temp_', stringname)
+max_temp <- paste0('max_temp_', stringname)
+min_temp <- paste0('min_temp_', stringname)
+sf$mean <- sapply(temps, mean, na.rm = TRUE)
+sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
+sf[,max_temp] <- sapply(temps, max)
+sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
+sf[,min_temp] <- sapply(temps, min)
+sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
+sf
 
 
 
@@ -144,7 +160,7 @@ temp_func <-function(sf, rastername, stringname) {
 
 landsat <- temp_func(shapes, raster_test, 'test')
 
-cp_day_test <- cp_raw %>% 
+cp_avg <- cp_raw %>% 
   filter(date == as.POSIXct("2014-06-04"),
          !is.na(hourly_dry_bulb_temperature))
 

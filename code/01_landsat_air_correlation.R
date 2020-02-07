@@ -7,6 +7,32 @@ library(XML)
 library(methods)
 
 
+# Notes on Data -----------------------------------------------------------
+
+#' Surface Temp data is sourced through LANDSAT 8, provided by USGS Earth Explorer.
+#' The satelite orbits the earth vertically, across the poles. It captures roughly 
+#' 112 mile (~180 km) wide swaths of the earth at a time, and circumnavigates the 
+#' globe every 99 minutes. This also means that it will pass over the same longitude
+#' at the same time, +/- 15 minutes. This makes time comparison quite easy.
+#' 
+#' To ensure no gaps in data, LANDSAT 8 paths overlap slightly. New York City 
+#' conveniently falls in the intersection of two paths - columns 13 and 14 of 
+#' row 32. This means we get twice as many measurements. A third path, probably
+#' column 15, also picks up as New York City on the Earth Explorer site, but
+#' actually contains no (or nearly no) NYC geometry. Accordingly, every third
+#' will return NA, as it contains no values within the geometry we are examining.
+#' 
+#' Data Source:
+#' https://earthexplorer.usgs.gov/
+#' Acquisition Visualization:
+#' https://landsat.usgs.gov/landsat_acq
+#' NYC Coordinates: 40.7128° N, 74.0060° W
+#' L8 Data User's Handbook:
+#' https://prd-wret.s3-us-west-2.amazonaws.com/assets/palladium/production/atoms/files/LSDS-1574_L8_Data_Users_Handbook-v5.0.pdf
+
+
+
+
 
 # Air Temps ---------------------------------------------------------------
 
@@ -140,7 +166,6 @@ as.POSIXct(trimws(str_replace_all(xmlValue(xmldf[[4]][["tile_metadata"]][["globa
 for (i in 1:length(xmldf)) {
      print(str_replace_all(xmlValue(xmldf[[i]][["scene_metadata"]][["global_metadata"]][["scene_center_time"]][[1]]), "\\.[0-9A-Z]*", ""))
 }
-
 
 
 

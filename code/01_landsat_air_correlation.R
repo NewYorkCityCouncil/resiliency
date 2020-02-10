@@ -5,6 +5,7 @@ library(sf)
 library(leaflet)
 library(XML)
 library(methods)
+library(lubridate)
 
 
 # Notes on Data -----------------------------------------------------------
@@ -44,12 +45,15 @@ cp_raw <- read_csv("data/input/Ground_Monitor_Temps_NYC/central_park_temp.csv") 
   mutate(name = "Central Park")
 
 #separate date and time out, as we may not be able to use time
-hours_cp <- format(as.POSIXct(strptime(cp_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%H:%M")
+# hours_cp <- format(as.POSIXct(strptime(cp_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%H:%M")
+# 
+# dates_cp <- format(as.POSIXct(strptime(cp_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%Y-%m-%d")
+# 
+# cp_raw$date <- dates_cp
+# cp_raw$hour <- hours_cp
 
-dates_cp <- format(as.POSIXct(strptime(cp_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%Y-%m-%d")
-
-cp_raw$date <- dates_cp
-cp_raw$our <- hours_cp
+cp_raw <- cp_raw %>% 
+  filter(!is.na(date))
 
 # La Guardia
 lag_raw <- read_csv("data/input/Ground_Monitor_Temps_NYC/laguardia_temp.csv") %>% 
@@ -59,12 +63,15 @@ lag_raw <- read_csv("data/input/Ground_Monitor_Temps_NYC/laguardia_temp.csv") %>
 
 #separate date and time out, as we may not be able to use time
 
-hours_lag <- format(as.POSIXct(strptime(lag_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%H:%M")
+# hours_lag <- format(as.POSIXct(strptime(lag_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%H:%M")
+# 
+# dates_lag <- format(as.POSIXct(strptime(lag_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%Y-%m-%d")
+# 
+# lag_raw$date <- dates_lag
+# lag_raw$hour <- hours_lag
 
-dates_lag <- format(as.POSIXct(strptime(lag_raw$date,"%Y-%m-%d %H:%M",tz="")) ,format = "%Y-%m-%d")
-
-lag_raw$date <- dates_lag
-lag_raw$hour <- hours_lag
+lag_raw <- lag_raw %>% 
+  filter(!is.na(date))
 
 
 
@@ -128,9 +135,8 @@ dataset_names <- str_extract(str_extract(filenames, pattern ="029007_[0-9]*"), p
 names(res) <- dataset_names
 
 #join listed dataframes into single dataframe
-raster_shape <- bind_rows(res, .id = "column_label")
-
-
+raster_shape <- bind_rows(res, .id = "column_label") %>% 
+  mutate(date = lubridate::ymd(str_replace(raster_shape$column_label, "_", "")))
 
 # a lot of values are coming up as n/a - every third value, in fact.
 
@@ -156,33 +162,57 @@ raster_shape <- bind_rows(res, .id = "column_label")
 # sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
 # sf
 
+
+#' After examining the documentation and the metadata provided in the xml files,
+#' it's clear that the the satellite orbits the earth with such consistency (99 
+#' minutes) that we don't actually need to include the time - the satelite will
+#' always reach row 32 of its orbit (the row in which NYC resides) at ~ 15:30, 
+#' +/- 15 minutes. Therefore, for all dates, we'll look at the air temperatures 
+#' at 15:00 and 16:00.
+
+# Read in all xmlfiles, and use TreeParse to separate the files into subsettable
+# parts
 xmlfilenames <- list.files("data/input/landsat_xml", pattern="*.xml", full.names=TRUE)
 xmldf <- lapply(xmlfilenames, xmlTreeParse)
 xmldf <- lapply(xmldf, xmlRoot)
 
 
-as.POSIXct(trimws(str_replace_all(xmlValue(xmldf[[4]][["tile_metadata"]][["global_metadata"]][["aquisition"]][[1]]), "[A-Z]", " ")))
+#as.POSIXct(trimws(str_replace_all(xmlValue(xmldf[[4]][["tile_metadata"]][["global_metadata"]][["aquisition"]][[1]]), "[A-Z]", " ")))
 
+# Extract all times
 for (i in 1:length(xmldf)) {
      print(str_replace_all(xmlValue(xmldf[[i]][["scene_metadata"]][["global_metadata"]][["scene_center_time"]][[1]]), "\\.[0-9A-Z]*", ""))
 }
 
-
-
-test <- xmlParse("data/input/landsat_xml/LC08_CU_029007_20180928_20190614_C01_V01.xml")
-
-
-rootnode <- xmlRoot(test)
+#date test
 xmlValue(rootnode[[1]][[1]][[9]])
 
-xmlParseString(rootnode[[1]][[1]][[9]])
+
+
 
 # Prepare Air Temps for Join ----------------------------------------------
 
+
+
 ## Aggregate the air temps by day
-cp_avg <- cp_raw %>% 
-  filter(date == as.POSIXct("2014-06-04"),
+cp_avg <- cp_raw %>%  
+  filter(!is.na(hourly_dry_bulb_temperature),
+         format(date,format='%Y-%m-%d') %in% as.character(raster_shape$date),
+         as.POSIXct(format(date,format='%H:%M:%S'), format = "%H:%M:%S")
+         %within%
+             interval(
+               as.POSIXct(paste0(today("EST"), "15:00:00"), 
+                          format = "%Y-%m-%d %H:%M:%S", tz = "EST"), 
+               as.POSIXct(paste0(today("EST"), "16:00:00"), 
+                          format = "%Y-%m-%d %H:%M:%S", tz = "EST")))
+                                                                       
+                                                                       ),))
+  mutate(hour = chron::chron(times  = paste0(cp_raw$hour, ":00"))) %>% 
+  filter(as.character(date) %in% as.character(raster_shape$date),
          !is.na(hourly_dry_bulb_temperature))
+  
+cp_dates <- 
+
 
 cp_test_avg <- round(mean(cp_day_test$hourly_dry_bulb_temperature),0)
 

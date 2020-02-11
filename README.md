@@ -1,6 +1,8 @@
 # resiliency
 for resiliency sustainability group - looking at heat and flooding areas
 
+We are focusing on the summer months from 2014 to 2019 in NYC.
+
 ## Data Structure
 
 - data
@@ -30,3 +32,7 @@ for resiliency sustainability group - looking at heat and flooding areas
   2. You need to add the data to your cart, then go to your cart, where you can select that you want a csv and subset to the dates you are interested in.
      - [Central Park](https://www.ncdc.noaa.gov/cdo-web/datasets/LCD/stations/WBAN:94728/detail)
 
+## Validating Data
+- Satellite Readings
+  1. Cloud Cover: https://landsat.usgs.gov/landsat-8-cloud-cover-assessment-validation-data#Urban
+  2. Comparing Ground Monitor temperatures to Satellite readings

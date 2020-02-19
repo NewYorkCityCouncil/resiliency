@@ -1,6 +1,3 @@
-
-
-
 # Notes -------------------------------------------------------------------
 
 #' After discussion with a NASA-affiliated expert, we've determined that 
@@ -21,131 +18,95 @@
 #' get an accurate impression not of temperature, but of relative temperature - 
 #' how the temperatures compare to each other.
 
-
-
-library(stars)
 library(raster)
+library(rgdal) # for spTransform
 library(sf)
-library(velox)
-
-"data/input/landsat_st/LC08_CU_029007_20190830_20190919_C01_V01_ST.tif"
-"data/input/landsat_st/LC08_CU_029007_20190922_20191001_C01_V01_ST.tif"
-"data/input/landsat_st/LC08_CU_029007_20180710_20190614_C01_V01_ST.tif"
-
-
-## Define the function
-gdal_polygonizeR <- function(x, outshape=NULL, gdalformat = 'ESRI Shapefile',
-                             pypath=NULL, readpoly=TRUE, quiet=TRUE) {
-  if (isTRUE(readpoly)) require(rgdal)
-  if (is.null(pypath)) {
-    pypath <- Sys.which('gdal_polygonize.py')}
-                        if (!file.exists(pypath)) stop("Can\'t find gdal_polygonize.py on your system.")
-                        owd <- getwd()
-                        on.exit(setwd(owd))
-                        setwd(dirname(pypath))
-                        if (!is.null(outshape)) {
-                        outshape <- sub('\\.shp$', '', outshape)
-                        f.exists <- file.exists(paste(outshape, c('shp', 'shx', 'dbf'), sep='.'))
-                        if (any(f.exists))
-                        stop(sprintf('File already exists: %s',
-                        toString(paste(outshape, c('shp', 'shx', 'dbf'),
-                        sep='.')[f.exists])), call.=FALSE)
-                        } else outshape <- tempfile()
-                        if (is(x, 'Raster')) {
-                        require(raster)
-                        writeRaster(x, {f <- tempfile(fileext='.tif')})
-                        rastpath <- normalizePath(f)
-                        } else if (is.character(x)) {
-                        rastpath <- normalizePath(x)
-                        } else stop('x must be a file path (character string), or a Raster object.')
-                        system2('python', args=(sprintf('"%1$s" "%2$s" -f "%3$s" "%4$s.shp"',
-                        pypath, rastpath, gdalformat, outshape)))
-                        if (isTRUE(readpoly)) {
-                        shp <- readOGR(dirname(outshape), layer = basename(outshape), verbose=!quiet)
-                        return(shp)
-                        }
-                        return(NULL)
-  }
+library(maptools)
+library(sp)
+library(tidyverse)
+library(lubridate)
+library(leaflet)
+options(scipen = 999)
+#below 3% cloud coverage
 
 
-library(rasterVis)
-r <- raster("data/input/landsat_st/LC08_CU_029007_20190830_20190919_C01_V01_ST.tif")
-levelplot(r, margin=FALSE, col.regions=rainbow)
-p <- gdal_polygonizeR(r)
+july_10_18_tif <- 'data/input/landsat_final_used_values/LC08_CU_029007_20180710_20190614_C01_V01_ST.tif'
+#0.3% cloud coverage
+august_30_19_tif <- 'data/input/landsat_final_used_values/LC08_CU_029007_20190830_20190919_C01_V01_ST.tif'
+sept_22_19_tif <- 'data/input/landsat_final_used_values/LC08_CU_029007_20190922_20191001_C01_V01_ST.tif'
+nyc <-st_read("data/input/Borough Boundaries/geo_export_c9b00a06-66dd-495d-a6b3-a4e923b39c1b.shp") %>%
+  st_transform("+proj=longlat +datum=WGS84")
 
 
-x <- rasterToPoints(r, fun=NULL, spatial=TRUE)
+# Create data
+august_30_19_raster <- raster(august_30_19_tif)
+july_10_18_raster <- raster(july_10_18_tif)
+sept_22_19_raster <- raster(sept_22_19_tif)
 
 
-tif = system.file("data/input/landsat_st/LC08_CU_029007_20190922_20191001_C01_V01_ST.tif, package = "stars")
-x = read_stars(tif)
+
+#reproject nyc polygon to raster projection
+nyc1 <- st_transform(nyc, projection(august_30_19_raster))
 
 
-filenames <- list.files("data/input/landsat_final_used_values", pattern="*.tif", full.names=TRUE)
-ldf_r <- lapply(filenames, raster)
+#crop & mask the raster file to poylgon extent/boundary
+august_30_19_masked <- mask(august_30_19_raster, nyc1)
+august_30_19_cropped <- crop(august_30_19_masked, nyc1)
 
-# aug3019 <- read_stars("data/input/landsat_st/LC08_CU_029007_20190922_20191001_C01_V01_ST.tif")
-# crs(aug3019)
-# plot(aug3019)
-# augsf <- st_as_sf(aug3019)
-# spdf_2 <- as(aug3019,'SpatialPointsDataFrame')
+july_10_18_masked <- mask(august_30_19_raster, nyc1)
+july_10_18_cropped <- crop(july_10_18_masked, nyc1)
+
+sept_22_19_masked <- mask(august_30_19_raster, nyc1)
+sept_22_19_cropped <- crop(sept_22_19_masked, nyc1)
 
 
-# Landsat Temps -------------------------------------------------------------
+
+# Convert raster to Sf
+august_30_19_sf <- rasterToPoints(august_30_19_cropped, spatial = TRUE) %>%
+  as_tibble() %>% 
+  mutate(date = mdy("08-30-2019"))
+
+july_10_18_sf <- rasterToPoints(july_10_18_cropped, spatial = TRUE) %>%
+  as_tibble() %>% 
+  mutate(date = mdy("07-10-2018"))
+
+sept_22_19_sf <- rasterToPoints(sept_22_19_cropped, spatial = TRUE) %>%
+  as_tibble() %>% 
+  mutate(date = mdy("09-22-2019"))
+
 
 # Converting Kelving to Fahrenheit
 k_to_f <- function(temp) { fahrenheight <- ((temp - 273) * (9/5)) + 32  }
 
-temp_func_2 <-function(rastername) {
-  rstr <- velox(rastername)
-  sf <- st_transform(shapes, crs(rastername))
-  temps <- rstr$extract(sp=sf$geometry)
-  mean_temp <- paste0('mean_temp')
-  max_temp <- paste0('max_temp')
-  min_temp <- paste0('min_temp')
-  sf[,mean_temp] <- sapply(temps, mean, na.rm = TRUE)
-  sf[,mean_temp] <- k_to_f(sf[,mean_temp]/10)
-  sf[,max_temp] <- sapply(temps, max)
-  sf[,max_temp] <- k_to_f(sf[,max_temp]/10)
-  sf[,min_temp] <- sapply(temps, min)
-  sf[,min_temp] <- k_to_f(sf[,min_temp]/10)
-  sf
-}
 
-#load in all raster files and apply the temp func to get mean, max and min temperatures
-# within the sf geometry
 
-filenames <- list.files("data/input/landsat_st", pattern="*.tif", full.names=TRUE)
-test_filenames = filenames[1:3]
-ldf <- lapply(filenames, raster)
-res <- lapply(ldf, temp_func_2)
+# Merge sfs
 
-#pull out just the date for the names of each dataframe
-dataset_names <- str_extract(str_extract(filenames, pattern ="029007_[0-9]*"), pattern = "_[0-9]*")
+collected_sf <- rbind(august_30_19_sf, july_10_18_sf, sept_22_19_sf) %>% 
+  mutate(coords = paste0(as.character(x),", ", as.character(y)))
 
-# name the dataframes in the list
-names(res) <- dataset_names
 
-#join listed dataframes into single dataframe
-raster_shape <- bind_rows(res, .id = "column_label") %>% 
-  mutate(date = lubridate::ymd(str_replace(raster_shape$column_label, "_", ""))) %>% 
-  filter(!is.na(max_temp))
 
-# a lot of values are coming up as n/a - every third value, in fact.
+median_temp <- collected_sf %>% 
+  rename(temp = LC08_CU_029007_20190830_20190919_C01_V01_ST) %>% 
+  group_by(coords) %>% 
+  summarise(median_temp = k_to_f(median(temp)/10)) %>% 
+  separate(coords, into = c("x", "y"), sep = ", ") %>% 
+  mutate(x = as.numeric(x),
+         y = as.numeric(y))
 
-# After looking at the raster images themselves, I believe it's because, while
-# they are categorized under NYC, the satelite doesn't actually pass over much 
-# of the city, if any. But they still count it as a NYC file. These will be 
-# removed from the analysis
-# 
-# 
-raster_test <- raster("data/input/landsat_st/LC08_CU_029007_20140908_20190503_C01_V01_ST.tif")
-raster_test <- raster("data/input/landsat_st/LC08_CU_029007_20140604_20190504_C01_V01_ST.tif")
-plot(raster_test)
-rstr <- velox(raster_test)
-sf <- st_transform(shapes, crs(raster_test))
-temps <- rstr$extract(sp=sf$geometry)
-sf$mean <- sapply(temps, mean, na.rm = TRUE)
-sf$mean_temp <- k_to_f(sf$mean/10)
-sf$max_temp <- sapply(temps, max)
-sf$max_f <- k_to_f(sf$max_temp/10)
+median_temp_sf <- st_as_sf(median_temp, coords = c("x", "y")) 
+
+median_temp_sf = median_temp_sf %>% st_set_crs(crs(august_30_19_cropped)) %>% st_transform(4326)
+
+  
+
+st_crs(median_temp_sf) = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
+
+st_crs(st_transform(median_temp_sf, "+init=epsg:4326"))
+
+str(median_temp_sf)
+
+
+leaflet(median_temp_sf) %>% 
+  addCircleMarkers(radius = .1)

@@ -21,11 +21,11 @@
 library(raster)
 library(rgdal) # for spTransform
 library(sf)
-library(maptools)
-library(sp)
 library(tidyverse)
 library(lubridate)
 library(leaflet)
+library(ggplot2)
+library(spatialEco)
 options(scipen = 999)
 #below 3% cloud coverage
 
@@ -49,7 +49,7 @@ sept_22_19_raster <- raster(sept_22_19_tif)
 nyc1 <- st_transform(nyc, projection(august_30_19_raster))
 
 
-#crop & mask the raster file to poylgon extent/boundary
+#crop & mask the raster files to poylgon extent/boundary
 august_30_19_masked <- mask(august_30_19_raster, nyc1)
 august_30_19_cropped <- crop(august_30_19_masked, nyc1)
 
@@ -65,6 +65,13 @@ sept_22_19_cropped <- crop(sept_22_19_masked, nyc1)
 august_30_19_sf <- rasterToPoints(august_30_19_cropped, spatial = TRUE) %>%
   as_tibble() %>% 
   mutate(date = mdy("08-30-2019"))
+
+
+august_30_19_poly <- rasterToPolygons(august_30_19_cropped, dissolve = TRUE)
+august_30_19_poly_smooth <- smooth(august_30_19_poly, method = "ksmooth")
+plot(august_30_19_poly)
+august_30_19_poly_smooth %>%
+
 
 july_10_18_sf <- rasterToPoints(july_10_18_cropped, spatial = TRUE) %>%
   as_tibble() %>% 
@@ -99,14 +106,69 @@ median_temp_sf <- st_as_sf(median_temp, coords = c("x", "y"))
 
 median_temp_sf = median_temp_sf %>% st_set_crs(crs(august_30_19_cropped)) %>% st_transform(4326)
 
-  
-
-st_crs(median_temp_sf) = "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"
-
-st_crs(st_transform(median_temp_sf, "+init=epsg:4326"))
-
-str(median_temp_sf)
+# As seen below, distribution of points seems pretty normal, slight tail on the 
+# left, or possibly even an overlapping of two distributions, driven by var-
+# iables about which we don't have access to information.
+ggplot(median_temp_sf, aes(x = median_temp)) +
+  geom_histogram()
 
 
-leaflet(median_temp_sf) %>% 
-  addCircleMarkers(radius = .1)
+
+# Z-Scores
+#' because distribution is relatively normal, we're electing to go with z-score
+#' calculation, so as to represent the distribution accurately without relying
+#' on Fahrenheit values
+
+# (value - mean)/stdev
+
+median_temp_sf$zscore <- scale(median_temp_sf$median_temp)
+
+
+
+# Heat Map ----------------------------------------------------------------
+
+
+#convert to spatial for sp.kde
+median_temp_sp <- as(median_temp_sf, "Spatial")
+
+# Use kernel density estimate (kde) to create heatmap of city; using higher
+# row/column values for a resolution that better fits the scale of the data.
+kde_heat <- sp.kde(x = median_temp_sp, y = median_temp_sp$zscore,  
+        nr = 600, nc = 600)
+plot(kde_heat)
+
+
+# crop this new raster to nyc
+nyc1 <- st_transform(nyc, projection(kde_heat))
+
+
+#crop & mask the raster files to poylgon extent/boundary
+kde_heat_masked <- mask(kde_heat, nyc1)
+kde_heat_crop <- crop(kde_heat_masked, nyc1)
+
+
+
+# Leaflet Map -------------------------------------------------------------
+
+
+# Filter for hotspots
+heat_sf <- median_temp_sf %>% 
+  filter(zscore >= 2)
+
+# shows what percentage of data we'll be using; flexible, depending on how much
+# you want to see.
+nrow(heat_sf)/nrow(median_temp_sf)
+
+pal_rev <- rev(colorRamps::matlab.like(15))
+pal <- colorNumeric(rev(colorRamps::matlab.like(15)), values(kde_heat_crop),
+                    na.color = "transparent")
+
+
+palette_rev <- rev(brewer.pal(5, "YlGnBu"))
+previewColors(colorNumeric(palette = palette_rev ,domain = 1:5), values = 1:5)
+
+leaflet(heat_sf) %>%
+  addProviderTiles('CartoDB.Positron') %>%
+  addRasterImage(kde_heat_crop, colors = pal, opacity = 0.4) %>% 
+  addLegend(pal = pal, values = values(r),
+          title = "Surface temp")

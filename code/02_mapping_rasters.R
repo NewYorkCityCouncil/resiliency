@@ -160,15 +160,14 @@ heat_sf <- median_temp_sf %>%
 nrow(heat_sf)/nrow(median_temp_sf)
 
 pal_rev <- rev(colorRamps::matlab.like(15))
-pal <- colorNumeric(rev(colorRamps::matlab.like(15)), values(kde_heat_crop),
+heat_pal <- colorNumeric(rev(colorRamps::matlab.like(15)), values(kde_heat_crop),
                     na.color = "transparent")
 
 
-palette_rev <- rev(brewer.pal(5, "YlGnBu"))
-previewColors(colorNumeric(palette = palette_rev ,domain = 1:5), values = 1:5)
-
-leaflet(heat_sf) %>%
+leaflet() %>%
   addProviderTiles('CartoDB.Positron') %>%
-  addRasterImage(kde_heat_crop, colors = pal, opacity = 0.4) %>% 
+  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) 
+
+%>% 
   addLegend(pal = pal, values = values(r),
           title = "Surface temp")

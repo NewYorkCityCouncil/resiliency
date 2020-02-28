@@ -7,6 +7,7 @@ library(ggpubr)
 library(RSocrata)
 library(hrbrthemes)
 library(spatialEco)
+library(data.table)
 
 
 
@@ -225,112 +226,133 @@ leaflet(flood_points_sf_filtered,
 
 
 
-# %>% 
-#   addCircleMarkers(radius = 1, color = ~flood_points_pal(flooding_normalized), popup = flood_points_popup)
-
-
 # Waste Characterization Analysis ------------------------------------------
 
 
 
 
 
-trash_pdf <- pdf_text("data/input/2017 NYC Waste Characterization Study p16.pdf") %>% 
-  readr::read_lines()
-
-waste_raw <- trash_pdf[3:19] %>% 
-  trimws(which = "both") %>% 
-  strsplit(split = "\\s{2,}")
-
-waste_variables <- waste_raw[1] %>% 
-  unlist()
-
-waste_variables <- c("Material", waste_variables)
-
-waste_data_lines <- waste_raw[c(3:4, 6:8, 10:13, 15:17)]
-
-waste_categories <- waste_raw[c(2,5,9,14)] %>% 
-  unlist() 
-
-waste_categories <- waste_categories[c(1,5,9,13)]
-
-# number of items for each category: 2, 3, 4, 2
-
-category <- c(rep(waste_categories[1], 2),
-              rep(waste_categories[2], 3),
-              rep(waste_categories[3], 4),
-              rep(waste_categories[4], 2))
-
-waste_df <- plyr::ldply(waste_data_lines)
-colnames(waste_df) <- waste_variables
-
-waste <- as_tibble(waste_df) %>% 
-  janitor::clean_names() %>% 
-  select(material, x2017) %>% 
-  mutate(x2017 = as.numeric(gsub("%", "", x2017))) %>% 
-  filter(!is.na(x2017)) %>% 
-  mutate(category = category,
-         share = paste0(x2017, "%"))
-
-
-
-# donuts <- function(x, group = 1, labels = NA, col = NULL, radius = c(.7, 1)) {
-#   group <- rep_len(group, length(x))
-#   ug  <- unique(group)
-#   tbl <- table(group)[order(ug)]
-#   
-#   col <- if (is.null(col))
-#     seq_along(ug) else rep_len(col, length(ug))
-#   col.main <- Map(rep, col[seq_along(tbl)], tbl)
-#   col.sub  <- lapply(col.main, function(x) {
-#     al <- head(seq(0, 1, length.out = length(x) + 2L)[-1L], -1L)
-#     Vectorize(adjustcolor)(x, alpha.f = al)
-#   })
-#   
-#   plot.new()
-#   
-#   par(new = TRUE)
-#   pie(x, border = NA, radius = radius[2L],
-#       col = unlist(col.sub), labels = labels)
-#   
-#   par(new = TRUE)
-#   pie(x, border = NA, radius = radius[1L],
-#       col = unlist(col.main), labels = NA)
-# }
+# trash_pdf <- pdf_text("data/input/2017 NYC Waste Characterization Study p16.pdf") %>% 
+#   readr::read_lines()
 # 
+# waste_raw <- trash_pdf[3:19] %>% 
+#   trimws(which = "both") %>% 
+#   strsplit(split = "\\s{2,}")
 # 
-# par(mfrow = c(3,1), mar = c(4,4,0,4))
-# with(waste,
-#      donuts(share, category, sprintf('%s: %s%%', material, share),
-#             col = c('cyan2','red','orange','green','dodgerblue2'))
-# )
+# waste_variables <- waste_raw[1] %>% 
+#   unlist()
+# 
+# waste_variables <- c("Material", waste_variables)
+# 
+# waste_data_lines <- waste_raw[c(3:4, 6:8, 10:13, 15:17)]
+# 
+# waste_categories <- waste_raw[c(2,5,9,14)] %>% 
+#   unlist() 
+# 
+# waste_categories <- waste_categories[c(1,5,9,13)]
+# 
+# # number of items for each category: 2, 3, 4, 2
+# 
+# category <- c(rep(waste_categories[1], 2),
+#               rep(waste_categories[2], 3),
+#               rep(waste_categories[3], 4),
+#               rep(waste_categories[4], 2))
+# 
+# waste_df <- plyr::ldply(waste_data_lines)
+# colnames(waste_df) <- waste_variables
+# 
+# waste <- as_tibble(waste_df) %>% 
+#   janitor::clean_names() %>% 
+#   select(material, x2017) %>% 
+#   mutate(x2017 = as.numeric(gsub("%", "", x2017))) %>% 
+#   filter(!is.na(x2017)) %>% 
+#   mutate(category = category,
+#          share = paste0(x2017, "%"))
 
 
-  
-amount <- c(3, 2, 5, 25, 65)
-Source <- c("Other", "Renewables", "Hydropower", "Nuclear", "Fossil Fuels")
-data <- data.table::data.table(amount, Source)
-data[, label := paste(amount, "%", sep="")]
 
-library(data.table)
-waste_data_table <- as.data.table(waste)
+
+## After speaking with analysts, we're customizgin what granularity of information is presented
+name <- c('Clean Paper, Cardboard', "Metal, Glass, Plastic, Cartons", "Organics", "Other", "Textiles", "Diverted Materials")
+percent <- c(17,17,34,23,6,3)
+
+#sanity check
+sum(percent)
+
+waste_custom <- data.table(name, percent)
+
+setorder(waste_custom, cols = percent)
+
+
+
+barplot_colors <- c("#D05D4E","#F59F00","#228AE6","#12B886","#23417D","#A07952")
+              #  ,"#82C91E","#CACACA","#2F56A6","#BE4BDB", "#B63F26")
+
+
+
+
+ggplot(waste_custom, aes(x=reorder(waste_custom$name, waste_custom$percent), y=sort(waste_custom$percent, decreasing = TRUE),
+           fill=as.factor(name))) + 
+geom_bar(stat = "identity") +
+coord_flip() +
+scale_fill_manual(values=barplot_colors) +
+xlab("Tonnage") + ylab("Material")+
+geom_text(# Filter data first
+  aes(label=paste0(percent, '%')), nudge_y = 5, size=3) +
+theme_ipsum(axis_title_just = "mc",
+            base_size = 8,
+            axis_title_size = 11,
+            axis_text_size = 10) +
+theme(legend.position="none",
+      panel.grid.major.y = element_blank(),
+      panel.grid.minor.y = element_blank(),
+      text = element_text(family = "Open Sans"),
+      plot.title = element_text(family = "Georgia",size = 14),
+      axis.text.y = element_text(margin = margin(t = 0, r = -16, b = 0, l = 0)),
+      axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
+      axis.title.x = element_text(margin = margin(t = 10, r = 0, b = 0, l = 0))) +
+ggtitle("NYC Waste Composition 2017, Landfill Subset",) +
+labs(caption = "Source: New York City Department of Sanitation")
+
+ggsave("/bw_images/landfill_subset_categorizaiton.png", plot = p, path = getwd(), width = 8.5, height = 5, units = "in", dpi = 300)
+
+
+
+
+
+
 
 ggdonutchart(waste, x="x2017",  label = "share", 
              fill = "material", color = "white", lab.adjust = 0, 
-             lab.pos = "in", lab.font = c(size=3), 
-             palette = "viridis") + theme(legend.position="right",
-                                          panel.grid.major.y = element_blank(), 
-                                          panel.grid.major.x = element_blank(),
-                                          panel.grid.minor.x = element_blank(),
-                                          panel.grid.minor.y = element_blank(),
-                                          #text = element_text(family = "Open Sans"),
-                                          plot.title = element_text(family = "Georgia",size = 14)) +
-  labs(title = "       New York City Waste Categorization, 2017",
+             lab.pos = "in", lab.font = c(size=3)) + 
+  theme(legend.position="right",
+        panel.grid.major.y = element_blank(), 
+        panel.grid.major.x = element_blank(),
+        panel.grid.minor.x = element_blank(),
+        panel.grid.minor.y = element_blank(),
+        #text = element_text(family = "Open Sans"),
+        plot.title = element_text(family = "Georgia",size = 14)) +
+  scale_fill_manual(values=donut_cols) +
+  labs(title = "       New York City Waste Categorization, 2017 (Subset of Landfill Data)",
        subtitle = "",
        caption = "Source: New York City Department of Sanitation")
 
 
 
+# DEP Green Infrastructure Map --------------------------------------------
+
+gi_data <- read_sf("data/input/DEP Green Infrastructure/geo_export_3d6798f2-1f40-4bf8-84d1-a4c523865dd8.shp") %>% 
+  st_transform(crs = '+proj=longlat +datum=WGS84')
+
+gi_pal <- colorFactor(palette = c("#007534", "#1D5FD6","#B63F26", "#846126"),
+                      levels = unique(gi_data$sewer_type))
+                      
+leaflet(data = gi_data,
+        options = leafletOptions(zoomControl = FALSE)) %>% 
+  addProviderTiles("CartoDB.Positron") %>% 
+  addCircleMarkers(color = ~gi_pal(sewer_type),
+                   radius = .7) %>% 
+  addLegend(pal = gi_pal, values = gi_data$sewer_type, position = "topleft")
 
 
 

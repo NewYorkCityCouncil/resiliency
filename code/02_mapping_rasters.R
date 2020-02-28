@@ -67,12 +67,6 @@ august_30_19_sf <- rasterToPoints(august_30_19_cropped, spatial = TRUE) %>%
   mutate(date = mdy("08-30-2019"))
 
 
-august_30_19_poly <- rasterToPolygons(august_30_19_cropped, dissolve = TRUE)
-august_30_19_poly_smooth <- smooth(august_30_19_poly, method = "ksmooth")
-plot(august_30_19_poly)
-august_30_19_poly_smooth %>%
-
-
 july_10_18_sf <- rasterToPoints(july_10_18_cropped, spatial = TRUE) %>%
   as_tibble() %>% 
   mutate(date = mdy("07-10-2018"))
@@ -104,7 +98,7 @@ median_temp <- collected_sf %>%
 
 median_temp_sf <- st_as_sf(median_temp, coords = c("x", "y")) 
 
-median_temp_sf = median_temp_sf %>% st_set_crs(crs(august_30_19_cropped)) %>% st_transform(4326)
+median_temp_sf <- median_temp_sf %>% st_set_crs(crs(august_30_19_cropped)) %>% st_transform(4326)
 
 # As seen below, distribution of points seems pretty normal, slight tail on the 
 # left, or possibly even an overlapping of two distributions, driven by var-
@@ -123,6 +117,8 @@ ggplot(median_temp_sf, aes(x = median_temp)) +
 
 median_temp_sf$zscore <- scale(median_temp_sf$median_temp)
 
+# export median temp shapefile
+st_write(median_temp_sf, 'data/output/median_satellite_surface_temperatures.shp')
 
 
 # Heat Map ----------------------------------------------------------------
@@ -137,6 +133,8 @@ kde_heat <- sp.kde(x = median_temp_sp, y = median_temp_sp$zscore,
         nr = 600, nc = 600)
 plot(kde_heat)
 
+#write output
+writeRaster(kde_heat, filename="data/output/kde_heatmap.tif", format = "GTiff", overwrite=TRUE)
 
 # crop this new raster to nyc
 nyc1 <- st_transform(nyc, projection(kde_heat))
@@ -151,23 +149,23 @@ kde_heat_crop <- crop(kde_heat_masked, nyc1)
 # Leaflet Map -------------------------------------------------------------
 
 
-# Filter for hotspots
-heat_sf <- median_temp_sf %>% 
-  filter(zscore >= 2)
-
-# shows what percentage of data we'll be using; flexible, depending on how much
-# you want to see.
-nrow(heat_sf)/nrow(median_temp_sf)
+# # Filter for hotspots
+# heat_sf <- median_temp_sf %>% 
+#   filter(zscore >= 2)
+# 
+# # shows what percentage of data we'll be using; flexible, depending on how much
+# # you want to see.
+# nrow(heat_sf)/nrow(median_temp_sf)
 
 pal_rev <- rev(colorRamps::matlab.like(15))
 heat_pal <- colorNumeric(rev(colorRamps::matlab.like(15)), values(kde_heat_crop),
                     na.color = "transparent")
 
 
-leaflet() %>%
+leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
   addProviderTiles('CartoDB.Positron') %>%
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) 
 
-%>% 
-  addLegend(pal = pal, values = values(r),
-          title = "Surface temp")
+# %>% 
+#   addLegend(pal = pal, values = values(r),
+#           title = "Surface temp")

@@ -6,6 +6,7 @@ library(ggplot2)
 library(ggpubr)
 library(RSocrata)
 library(hrbrthemes)
+library(spatialEco)
 
 
 
@@ -157,16 +158,15 @@ xy <- norm_flooding[,c(2,1)]
 flood_points <- SpatialPointsDataFrame(coords = xy, data = norm_flooding, proj4string = CRS("+proj=longlat +datum=WGS84"))
 
 
-flood_points_sf <- st_as_sf(flood_points) %>% 
-  filter(flooding_normalized > 0)
-
-
 # Use kernel density estimate (kde) to create heatmap of city; using higher
 # row/column values for a resolution that better fits the scale of the data.
 kde_flood <- sp.kde(x = flood_points, y = flood_points$street_flooding_complaints,  
                    nr = 600, nc = 600, mask = TRUE,  bw = .018)
 plot(kde_flood)
 
+
+
+nyc <-st_read("data/input/Borough Boundaries/geo_export_c9b00a06-66dd-495d-a6b3-a4e923b39c1b.shp") 
 
 # crop this new raster to nyc
 nyc2 <- st_transform(nyc, projection(kde_flood))
@@ -176,35 +176,54 @@ nyc2 <- st_transform(nyc, projection(kde_flood))
 kde_flood_masked <- mask(kde_flood, nyc2)
 kde_flood_crop <- crop(kde_flood_masked, nyc2)
 
-
-flood_pal <- colorNumeric(colorRamps::matlab.like(15), values(kde_flood_crop),
+#color palette for raster map
+flood_pal <- colorNumeric("Reds", values(kde_flood_crop),
                          na.color = "transparent")
 
-# flood_points_pal <- colorNumeric(colorRamps::matlab.like(10), domain = flood_points_sf$flooding_normalized)
-# 
-# flood_points_popup <- as.character(flood_points_sf$flooding_normalized)
 
-
+# color palette for legend, as raster values can't be used for legend
 sequence <- seq(min(flood_points$street_flooding_complaints), max(flood_points$street_flooding_complaints), 5)
-flood_legend_pal <- colorBin(palette = colorRamps::matlab.like(15), bins = sequence, domain = sequence)
+flood_legend_pal <- colorBin(palette = "Reds", bins = sequence, domain = sequence)
 
 
-leaflet(flood_points_sf,
+#' as the raster prevents veiwers from seeing the location labels (unless the 
+#' opacity is lowered so much that it diminishes the visual effect of the 
+#' raster), we'll be adding labels in for neighborhoods, so it's easier to 
+#' identify which neighborhoods have the greatest number of complaints
+flood_points_sf <- st_as_sf(flood_points) %>% 
+  filter(street_flooding_complaints > 0)
+
+#add nta to get neighborhood names
+ntas <- read_sf("data/input/Neighborhood Tabulation Areas (NTA)/geo_export_7ed77860-f030-45da-bee8-a25c13fcdea8.shp") %>% 
+  select(ntaname, geometry) %>% 
+  st_transform(crs = crs(flood_points_sf))
+
+
+flood_points_sf <- st_join(flood_points_sf, ntas)
+
+flood_points_filtered <- as_tibble(flood_points_sf) %>% 
+  filter(street_flooding_complaints > 8) %>% 
+  distinct(ntaname, .keep_all = TRUE)
+
+flood_points_sf_filtered <- st_as_sf(flood_points_filtered) %>% 
+  filter(ntaname != "Lindenwood-Howard Beach")
+
+
+flood_points_sf_filtered[flood_points_sf_filtered$ntaname ==  "Mariner's Harbor-Arlington-Port Ivory-Graniteville",]$ntaname <- "Mariner's Harbor-Arlington-Port"
+
+#flood_points_sf_filtered[flood_points_sf_filtered$ntaname ==  "Lindenwood-Howard Beach",]$ntaname <- "Lindenwood"
+
+leaflet(flood_points_sf_filtered,
         options = leafletOptions(zoomControl = FALSE)) %>%
   addProviderTiles('CartoDB.Positron') %>%
-  addRasterImage(kde_flood_crop, colors = flood_pal, opacity = 0.4) %>% 
+  addLabelOnlyMarkers(label = ~ntaname, labelOptions = labelOptions(noHide = T, direction = "Bottom", textOnly = T)) %>% 
+  addRasterImage(kde_flood_crop, colors = flood_pal, opacity = 0.8) %>% 
   addLegend(title = "Number of Complaints", 
             pal = flood_legend_pal, 
             values = sequence,
             position = "topleft")
 
 
-options = leafletOptions(zoomControl = FALSE)) %>% 
-  addProviderTiles("CartoDB.Positron") %>% 
-  addPolygons(color = ~curbside_pal(curbside_pickup_status), popup = curbside_pop,
-              weight = .8) %>% 
-  addLegend(pal = curbside_pal, values = curbside_pickup_shape$curbside_pickup_status,
-            position = "topleft")
 
 # %>% 
 #   addCircleMarkers(radius = 1, color = ~flood_points_pal(flooding_normalized), popup = flood_points_popup)
@@ -298,7 +317,7 @@ waste_data_table <- as.data.table(waste)
 
 ggdonutchart(waste, x="x2017",  label = "share", 
              fill = "material", color = "white", lab.adjust = 0, 
-             lab.pos = "out", lab.font = c(size=3), 
+             lab.pos = "in", lab.font = c(size=3), 
              palette = "viridis") + theme(legend.position="right",
                                           panel.grid.major.y = element_blank(), 
                                           panel.grid.major.x = element_blank(),
@@ -306,41 +325,12 @@ ggdonutchart(waste, x="x2017",  label = "share",
                                           panel.grid.minor.y = element_blank(),
                                           #text = element_text(family = "Open Sans"),
                                           plot.title = element_text(family = "Georgia",size = 14)) +
-  labs(title = "       New York City Energy Consumption, 2017",
+  labs(title = "       New York City Waste Categorization, 2017",
        subtitle = "",
-       caption = "Source: Mayor's Office of Sustainability")
-
-
-
-
-amount <- waste$x2017
-Source <- waste$material
-data <- data.table(amount, Source)
-data[, label := paste(amount, "%", sep="")]
-
-ggdonutchart(data, x="amount",  label = "label", 
-             fill = "Source", color = "white", lab.adjust = 0, 
-             lab.pos = "out", lab.font = c(size=3), 
-             palette = "viridis") + theme(legend.position="right",
-                                          panel.grid.major.y = element_blank(), 
-                                          panel.grid.major.x = element_blank(),
-                                          panel.grid.minor.x = element_blank(),
-                                          panel.grid.minor.y = element_blank(),
-                                          #text = element_text(family = "Open Sans"),
-                                          plot.title = element_text(family = "Georgia",size = 14)) +
-  labs(title = "       New York City Energy Consumption, 2017",
-       subtitle = "",
-       caption = "Source: Mayor's Office of Sustainability")
-
-
-
-
-waste_raw <- read_csv("https://data.cityofnewyork.us/resource/k3ks-jzek.csv")
+       caption = "Source: New York City Department of Sanitation")
 
 
 
 
 
 
-
-https://data.cityofnewyork.us/resource/k3ks-jzek.csv

@@ -344,15 +344,15 @@ ggdonutchart(waste, x="x2017",  label = "share",
 gi_data <- read_sf("data/input/DEP Green Infrastructure/geo_export_3d6798f2-1f40-4bf8-84d1-a4c523865dd8.shp") %>% 
   st_transform(crs = '+proj=longlat +datum=WGS84')
 
-gi_pal <- colorFactor(palette = c("#007534", "#1D5FD6","#B63F26", "#846126"),
+gi_pal <- colorFactor(palette = c("#228AE6","#3b8f03","#b81a1a","#db12d5"),
                       levels = unique(gi_data$sewer_type))
                       
 leaflet(data = gi_data,
         options = leafletOptions(zoomControl = FALSE)) %>% 
   addProviderTiles("CartoDB.Positron") %>% 
   addCircleMarkers(color = ~gi_pal(sewer_type),
-                   radius = .7) %>% 
-  addLegend(pal = gi_pal, values = gi_data$sewer_type, position = "topleft")
+                   radius = .5) %>% 
+  addLegend(title = paste0("DEP Green Infrastructure Projects", "<br>", "Colored by Sewer Type"), pal = gi_pal, values = gi_data$sewer_type, position = "topleft")
 
 
 

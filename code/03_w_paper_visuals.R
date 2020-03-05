@@ -299,14 +299,14 @@ scale_fill_manual(values=barplot_colors) +
 xlab("Tonnage") + ylab("Material")+
 geom_text(# Filter data first
   aes(label=paste0(percent, '%')), nudge_y = 5, size=3) +
-theme_ipsum(axis_title_just = "mc",
-            base_size = 8,
-            axis_title_size = 11,
-            axis_text_size = 10) +
+# theme_ipsum(axis_title_just = "mc",
+#             base_size = 8,
+#             axis_title_size = 11,
+#             axis_text_size = 10) +
 theme(legend.position="none",
       panel.grid.major.y = element_blank(),
       panel.grid.minor.y = element_blank(),
-      text = element_text(family = "Open Sans"),
+      # text = element_text(family = "Open Sans"),
       plot.title = element_text(family = "Georgia",size = 14),
       axis.text.y = element_text(margin = margin(t = 0, r = -16, b = 0, l = 0)),
       axis.title.y = element_text(margin = margin(t = 0, r = 10, b = 0, l = 0)),
@@ -315,27 +315,6 @@ ggtitle("NYC Waste Composition 2017, Landfill Subset",) +
 labs(caption = "Source: New York City Department of Sanitation")
 
 ggsave("/bw_images/landfill_subset_categorizaiton.png", plot = p, path = getwd(), width = 8.5, height = 5, units = "in", dpi = 300)
-
-
-
-
-
-
-
-ggdonutchart(waste, x="x2017",  label = "share", 
-             fill = "material", color = "white", lab.adjust = 0, 
-             lab.pos = "in", lab.font = c(size=3)) + 
-  theme(legend.position="right",
-        panel.grid.major.y = element_blank(), 
-        panel.grid.major.x = element_blank(),
-        panel.grid.minor.x = element_blank(),
-        panel.grid.minor.y = element_blank(),
-        #text = element_text(family = "Open Sans"),
-        plot.title = element_text(family = "Georgia",size = 14)) +
-  scale_fill_manual(values=donut_cols) +
-  labs(title = "       New York City Waste Categorization, 2017 (Subset of Landfill Data)",
-       subtitle = "",
-       caption = "Source: New York City Department of Sanitation")
 
 
 

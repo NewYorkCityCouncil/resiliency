@@ -130,7 +130,7 @@ median_temp_sp <- as(median_temp_sf, "Spatial")
 # Use kernel density estimate (kde) to create heatmap of city; using higher
 # row/column values for a resolution that better fits the scale of the data.
 kde_heat <- sp.kde(x = median_temp_sp, y = median_temp_sp$zscore,  
-        nr = 600, nc = 600)
+        nr = 600, nc = 600, standardize = TRUE)
 plot(kde_heat)
 
 #write output
@@ -158,13 +158,17 @@ kde_heat_crop <- crop(kde_heat_masked, nyc1)
 # nrow(heat_sf)/nrow(median_temp_sf)
 
 pal_rev <- rev(colorRamps::matlab.like(15))
-heat_pal <- colorNumeric(rev(colorRamps::matlab.like(15)), values(kde_heat_crop),
+heat_pal <- colorNumeric(rev(colorRamps::matlab.like(15)), domain = values(kde_heat_crop),
                     na.color = "transparent")
+
+legend_val <- seq(min(median_temp_sp$zscore), max(median_temp_sp$zscore), by = 1)
+legend_pal <- colorNumeric(colorRamps::matlab.like(length(legend_val)), domain = legend_val)
 
 
 leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
   addProviderTiles('CartoDB.Positron') %>%
-  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) 
+  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
+  addLegend(position = "topleft", pal = legend_pal, values = legend_val,  labFormat = labelFormat(prefix = " "))
 
 # %>% 
 #   addLegend(pal = pal, values = values(r),

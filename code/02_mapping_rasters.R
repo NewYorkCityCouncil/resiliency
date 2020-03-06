@@ -26,6 +26,7 @@ library(lubridate)
 library(leaflet)
 library(ggplot2)
 library(spatialEco)
+library(htmlwidgets)
 options(scipen = 999)
 #below 3% cloud coverage
 
@@ -165,11 +166,9 @@ legend_val <- seq(min(median_temp_sp$zscore), max(median_temp_sp$zscore), by = 1
 legend_pal <- colorNumeric(colorRamps::matlab.like(length(legend_val)), domain = legend_val)
 
 
-leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
+heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
   addProviderTiles('CartoDB.Positron') %>%
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
-  addLegend(position = "topleft", pal = legend_pal, values = legend_val,  labFormat = labelFormat(prefix = " "))
+  addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))
 
-# %>% 
-#   addLegend(pal = pal, values = values(r),
-#           title = "Surface temp")
+withr::with_dir('images', saveWidget(heatmap, file="heat_kde.html"))

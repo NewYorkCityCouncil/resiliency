@@ -166,9 +166,11 @@ legend_val <- seq(min(median_temp_sp$zscore), max(median_temp_sp$zscore), by = 1
 legend_pal <- colorNumeric(colorRamps::matlab.like(length(legend_val)), domain = legend_val)
 
 
-heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
-  addProviderTiles('CartoDB.Positron') %>%
+heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, maxZoom = 14)) %>%
+  addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))
+
+heatmap
 
 withr::with_dir('images', saveWidget(heatmap, file="heat_kde.html"))

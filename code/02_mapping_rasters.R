@@ -234,10 +234,10 @@ heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, m
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4, group = "Citywide") %>% 
   addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
   addPolygons(data = parks, weight = .5, popup = ~parks_pop, fillColor = "green",color = "green", group = "Parks/Green Spaces") %>% 
-  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "COVID-19 Open Streets") %>% 
+  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "Open Street Locations") %>% 
   addLayersControl(
     baseGroups = c("Citywide", "Residential Only"),
-    overlayGroups = c("Parks/Green Spaces", "COVID-19 Open Streets"),
+    overlayGroups = c("Parks/Green Spaces", "Open Street Locations"),
     options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 
   addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces") %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))

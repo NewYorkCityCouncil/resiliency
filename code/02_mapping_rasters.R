@@ -9,7 +9,7 @@
 #' the data to cloud coverage and other factors that obscure satelite access to
 #' the ground.
 #' 
-#' However, as the experit pointed out, while temperatures may fluctuate, and 
+#' However, as the expert pointed out, while temperatures may fluctuate, and 
 #' are susceptible to "memory" (i.e. yesterday's rain may result in cooler sur-
 #' face temperatures than expected, even on a scorching day), they nonetheless
 #' operate consistently across space; the parts of the city that are the warmest
@@ -203,6 +203,18 @@ zoning <- read_sf("data/input/nycgiszoningfeatures_202003shp/nyzd.shp") %>%
                                                      "Unknown")))))) %>% 
   st_transform("+proj=longlat +datum=WGS84")
 
+residential <- zoning %>% 
+  filter(zoning == "Residential")
+
+
+
+# Use Residentail Zoning to Crop Heat Map ---------------------------------
+
+#crop & mask the raster files to poylgon extent/boundary
+res_heat_masked <- mask(kde_heat_crop, residential)
+res_heat_cropped <- crop(res_heat_masked, residential)
+
+
 parks_pop <- paste0("Park Space Name: ", parks$park_name)
 
 streets_pop <- paste0("Street: ", open_streets$on_street, "<br>",
@@ -219,10 +231,14 @@ parkstreets_val <- c("Parks", "Open Streets")
 
 heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, maxZoom = 16)) %>%
   addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
-  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
-  addPolygons(data = parks, weight = .5, popup = ~parks_pop, fillColor = "green",color = "green") %>% 
-  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey") %>% 
-  addPolygons(data = zoning, weight = .5, popup = ~zone_pop) %>% 
+  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4, group = "Citywide") %>% 
+  addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
+  addPolygons(data = parks, weight = .5, popup = ~parks_pop, fillColor = "green",color = "green", group = "Parks/Green Spaces") %>% 
+  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "COVID-19 Open Streets") %>% 
+  addLayersControl(
+    baseGroups = c("Citywide", "Residential Only"),
+    overlayGroups = c("Parks/Green Spaces", "COVID-19 Open Streets"),
+    options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 
   addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces") %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))
 
@@ -230,8 +246,5 @@ heatmap
 
 # identify hot spots that are residential, for example exclude the bklyn navy yard and airports or maybe add neighborhood labels too (edited) 
 # open streets should be a touch darker
-
-# source: https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd
-zoning <- read_sf('data/input/nyzd/geo_export_363f1e10-a560-48c9-be8e-706dec36446a.shp')
 
 withr::with_dir('images', saveWidget(heatmap, file="covid_updated_heat_kde.html"))

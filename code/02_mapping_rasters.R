@@ -122,6 +122,10 @@ median_temp_sf$zscore <- scale(median_temp_sf$median_temp)
 st_write(median_temp_sf, 'data/output/median_satellite_surface_temperatures.shp')
 
 
+## QUICK ACCESS
+median_temp_sf <- st_read("data/output/median_satellite_surface_temperatures.shp")
+
+
 # Heat Map ----------------------------------------------------------------
 
 
@@ -136,6 +140,10 @@ plot(kde_heat)
 
 #write output
 writeRaster(kde_heat, filename="data/output/kde_heatmap.tif", format = "GTiff", overwrite=TRUE)
+
+
+## QUICK ACCESS
+# kde_heat <- raster("data/output/kde_heatmap.tif")
 
 # crop this new raster to nyc
 nyc1 <- st_transform(nyc, projection(kde_heat))
@@ -166,11 +174,63 @@ legend_val <- seq(min(median_temp_sp$zscore), max(median_temp_sp$zscore), by = 1
 legend_pal <- colorNumeric(colorRamps::matlab.like(length(legend_val)), domain = legend_val)
 
 
-heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, maxZoom = 14)) %>%
+
+# COVID UPDATE: Add Parks and Social Distancing Open Streets --------------
+
+# Source: https://data.cityofnewyork.us/Recreation/Open-Space-Parks-/g84h-jbjm
+parks <- read_sf("data/input/Open Space (Parks)/geo_export_9cdc0d3f-3551-49bc-8d18-41aa3d30ffbe.shx") %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+# Source: https://data.cityofnewyork.us/Health/Open-Streets-Locations/uiay-nctu
+open_streets <- read_sf("data/input/Open Streets Locations/geo_export_360ab02d-04b9-4014-915b-3ca883d8c3e8.shp") %>%
+  st_transform("+proj=longlat +datum=WGS84")
+
+# source: https://www1.nyc.gov/site/planning/data-maps/open-data.page
+# NYC GIS Zoning Features
+
+zoning <- read_sf("data/input/nycgiszoningfeatures_202003shp/nyzd.shp") %>% 
+  janitor::clean_names() %>% 
+  mutate(zoning = ifelse(str_detect(zonedist, "PARK"),
+                         "Park",
+                         ifelse(str_detect(zonedist, "PLAYGROUND"),
+                                "Playground",
+                                ifelse(str_detect(zonedist, "C"),
+                                       "Commercial",
+                                       ifelse(str_detect(zonedist, "^R[1-9]"),
+                                              "Residential",
+                                              ifelse(str_detect(zonedist, "M"),
+                                                     "Manufacturing",
+                                                     "Unknown"))))))
+
+parks_pop <- paste0("Park Space Name: ", parks$park_name)
+
+streets_pop <- paste0("Street: ", open_streets$on_street, "<br>",
+                      "Between: ", open_streets$from_stree, " and ", open_streets$to_street, "<br>",
+                      "Days Open: ", open_streets$day_of_wee, "<br>",
+                      "Start Time: ",open_streets$start_time, "<br>",
+                      "End Time: ", open_streets$end_time)
+
+zone_pop <- paste0()
+
+parkstreets_pal <- c("green", "grey")
+parkstreets_val <- c("Parks", "Open Streets")
+
+
+heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, maxZoom = 16)) %>%
   addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
+  addPolygons(data = parks, weight = .5, popup = ~parks_pop, fillColor = "green",color = "green") %>% 
+  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey") %>% 
+  addPolygons(data = zoning, weight = .5, popup = ~zone_pop) %>% 
+  addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces") %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))
 
 heatmap
+
+# identify hot spots that are residential, for example exclude the bklyn navy yard and airports or maybe add neighborhood labels too (edited) 
+# open streets should be a touch darker
+
+# source: https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd
+zoning <- read_sf('data/input/nyzd/geo_export_363f1e10-a560-48c9-be8e-706dec36446a.shp')
 
 withr::with_dir('images', saveWidget(heatmap, file="heat_kde.html"))

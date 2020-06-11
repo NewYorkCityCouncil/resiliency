@@ -200,7 +200,8 @@ zoning <- read_sf("data/input/nycgiszoningfeatures_202003shp/nyzd.shp") %>%
                                               "Residential",
                                               ifelse(str_detect(zonedist, "M"),
                                                      "Manufacturing",
-                                                     "Unknown"))))))
+                                                     "Unknown")))))) %>% 
+  st_transform("+proj=longlat +datum=WGS84")
 
 parks_pop <- paste0("Park Space Name: ", parks$park_name)
 
@@ -233,4 +234,4 @@ heatmap
 # source: https://data.cityofnewyork.us/City-Government/Zoning-GIS-Data-Shapefile/kdig-pewd
 zoning <- read_sf('data/input/nyzd/geo_export_363f1e10-a560-48c9-be8e-706dec36446a.shp')
 
-withr::with_dir('images', saveWidget(heatmap, file="heat_kde.html"))
+withr::with_dir('images', saveWidget(heatmap, file="covid_updated_heat_kde.html"))

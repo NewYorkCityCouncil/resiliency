@@ -226,7 +226,7 @@ streets_pop <- paste0("Street: ", open_streets$on_street, "<br>",
 zone_pop <- paste0()
 
 parkstreets_pal <- c("green", "grey")
-parkstreets_val <- c("Parks", "Open Streets")
+parkstreets_val <- c("Parks/Green Spaces", "Open Street Locations")
 
 
 heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 11, maxZoom = 16)) %>%

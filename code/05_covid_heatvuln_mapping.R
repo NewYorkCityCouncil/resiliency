@@ -213,7 +213,7 @@ heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, m
   #addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces", group = "Parks/Green Spaces") %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " ")) %>% 
   addLegend(position = 'bottomleft', pal = ac_pal, values = ac_map_sf$Percent.of.Households, group = "Air Conditioning Access", title = "Percent Households with AC")  %>% 
-  addLegend(position = "bottomleft", pal = comorbidity_pal, values = relevant_comorbidities$intersect_prob, group = "Comorbidities", "Percent Residents with Hypertension/COPD") %>% 
+  addLegend(position = "bottomleft", pal = comorbidity_pal, values = relevant_comorbidities$intersect_prob, group = "Comorbidities", title = "Percent Residents with Hypertension/COPD") %>% 
   addLayersControl(baseGroups = c("Citywide", "Residential Only"),
                    overlayGroups = c("Parks/Green Spaces", "Open Street Locations", "Air Conditioning Access", "Comorbidities"),
                    options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 

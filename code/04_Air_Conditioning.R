@@ -41,6 +41,8 @@ nyc_puma <- read_sf("data/input/Public Use Microdata Areas (PUMA)/geo_export_6a7
 ac_map_sf <- st_sf(merge(nyc_puma, AC_names, by = "puma"))
 save(ac_map_sf, file = "data/output/AC_map_sf.RData")
 
+write_sf(ac_map_sf, "data/output/ac_map/ac_map.sf", driver = "ESRI Shapefile")
+
 
 # Map it! 
 

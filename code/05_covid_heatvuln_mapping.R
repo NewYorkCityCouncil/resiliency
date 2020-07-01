@@ -243,8 +243,8 @@ map2 <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZ
   addPolygons(data = ac_map_sf, weight = .5, color = "grey", fillColor = ac_pal(ac_map_sf$Percent.of.Households), fillOpacity = 0.5, label = lapply(ac_pop,HTML), group = "Air Conditioning Access") %>% 
   addPolygons(data = relevant_comorbidities, weight = .5, color = "grey", fillColor = comorbidity_pal(relevant_comorbidities$intersect_prob), fillOpacity = .5, group = "Comorbidities") %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " ")) %>% 
-  addLegend(position = 'topleft', pal = ac_pal, values = ac_map_sf$Percent.of.Households, group = "Air Conditioning Access", title = "Percent Households with AC")  %>% 
   addLegend(position = "topleft", pal = comorbidity_pal, values = relevant_comorbidities$intersect_prob, group = "Comorbidities", title = paste0("Percent Residents", "<br>", "with Hypertension/COPD")) %>%
+  addLegend(position = 'topleft', pal = ac_pal, values = ac_map_sf$Percent.of.Households, group = "Air Conditioning Access", title = "Percent Households with AC")  %>% 
   addLayersControl(overlayGroups = c("Heat Map", "Air Conditioning Access", "Comorbidities"),
                    options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 
   hideGroup(c("Air Conditioning Access", "Comorbidities"))

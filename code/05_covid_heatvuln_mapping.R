@@ -245,7 +245,7 @@ map2 <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZ
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " ")) %>% 
   addLegend(position = "topleft", pal = comorbidity_pal, values = relevant_comorbidities$intersect_prob, group = "Comorbidities", title = paste0("Percent Residents", "<br>", "with Hypertension/COPD")) %>%
   addLegend(position = 'topleft', pal = ac_pal, values = ac_map_sf$Percent.of.Households, group = "Air Conditioning Access", title = "Percent Households with AC")  %>% 
-  addLayersControl(overlayGroups = c("Heat Map", "Air Conditioning Access", "Comorbidities"),
+  addLayersControl(overlayGroups = c("Heat Map", "Comorbidities", "Air Conditioning Access"),
                    options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 
   hideGroup(c("Air Conditioning Access", "Comorbidities"))
 

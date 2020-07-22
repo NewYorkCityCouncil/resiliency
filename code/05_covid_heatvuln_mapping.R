@@ -223,13 +223,13 @@ comorbidity_pop <- paste0("Census Tract: ", relevant_comorbidities$census_tract,
 
 map1 <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZoom = 16)) %>%
   addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
-  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4, group = "Citywide") %>% 
-  addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
+  addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
+  #addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
   addPolygons(data = all_open_spaces, weight = .5, popup = ~open_spaces_pop, fillColor = "green",color = "green", group = "Parks/Green Spaces") %>% 
   addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "Open Street Locations") %>% 
   addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces", group = "Parks/Green Spaces") %>% 
-  addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " ")) %>% 
-  addLayersControl(baseGroups = c("Citywide", "Residential Only"),options = layersControlOptions(collapsed = FALSE), position = "bottomright")
+  addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))# %>% 
+  #addLayersControl(baseGroups = c("Citywide", "Residential Only"),options = layersControlOptions(collapsed = FALSE), position = "bottomright")
 
 map1
 

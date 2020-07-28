@@ -257,29 +257,3 @@ map2
 
 withr::with_dir('images', saveWidget(map2, file="ac_comorb_heat_kde.html"))
 
-
-
-
-# heatmap <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZoom = 16)) %>%
-#   addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
-#   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4, group = "Citywide") %>% 
-#   addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
-#   addPolygons(data = all_open_spaces, weight = .5, popup = ~open_spaces_pop, fillColor = "green",color = "green", group = "Parks/Green Spaces") %>% 
-#   addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "Open Street Locations") %>% 
-#   addPolygons(data = ac_map_sf, weight = .5, color = "grey", fillColor = ac_pal(ac_map_sf$Percent.of.Households), fillOpacity = 0.5, label = lapply(ac_pop,HTML), group = "Air Conditioning Access") %>% 
-#   addPolygons(data = relevant_comorbidities, weight = .5, color = "grey", fillColor = comorbidity_pal(relevant_comorbidities$intersect_prob), fillOpacity = .5, group = "Comorbidities") %>% 
-#   #addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces", group = "Parks/Green Spaces") %>% 
-#   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " ")) %>% 
-#   addLegend(position = 'bottomleft', pal = ac_pal, values = ac_map_sf$Percent.of.Households, group = "Air Conditioning Access", title = "Percent Households with AC")  %>% 
-#   addLegend(position = "bottomleft", pal = comorbidity_pal, values = relevant_comorbidities$intersect_prob, group = "Comorbidities", title = "Percent Residents with Hypertension/COPD") %>% 
-#   addLayersControl(baseGroups = c("Citywide", "Residential Only"),
-#                    overlayGroups = c("Parks/Green Spaces", "Open Street Locations", "Air Conditioning Access", "Comorbidities"),
-#                    options = layersControlOptions(collapsed = FALSE), position = "bottomright") %>% 
-#   hideGroup(c("Open Street Locations", "Air Conditioning Access", "Comorbidities"))
-# 
-# 
-# heatmap
-
-# identify hot spots that are residential, for example exclude the bklyn navy yard and airports or maybe add neighborhood labels too (edited) 
-# open streets should be a touch darker
-

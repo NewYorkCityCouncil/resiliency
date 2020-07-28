@@ -171,8 +171,11 @@ legend_val <- seq(min(median_temp_sp$zscore), max(median_temp_sp$zscore), by = 1
 legend_pal <- colorNumeric(colorRamps::matlab.like(length(legend_val)), domain = legend_val)
 
 
-parkstreets_pal <- c("green", "grey")
-parkstreets_val <- c("Parks/Green Spaces", "Open Street Locations")
+parkstreets_pal <- c("green"#, 
+                     #"grey"
+                     )
+parkstreets_val <- c("Parks/Green Spaces"#, "Open Street Locations"
+                     )
 
 ac_pal <- colorBin("RdYlBu", domain = ac_map_sf$Percent.of.Households)
 
@@ -226,8 +229,9 @@ map1 <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZ
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4) %>% 
   #addRasterImage(res_heat_cropped, colors = heat_pal, opacity = 0.4, group = "Residential Only") %>% 
   addPolygons(data = all_open_spaces, weight = .5, popup = ~open_spaces_pop, fillColor = "green",color = "green", group = "Parks/Green Spaces") %>% 
-  addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "Open Street Locations") %>% 
-  addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, title = "Open Spaces", group = "Parks/Green Spaces") %>% 
+  #addPolygons(data = open_streets, weight = 4, popup = ~streets_pop, color = "grey", fillColor = "grey", group = "Open Street Locations") %>% 
+  addLegend(position = "bottomleft", colors = parkstreets_pal, labels = parkstreets_val, #title = "Green Spaces", group = "Parks/Green Spaces"
+            ) %>% 
   addLegend(position = "topleft", pal = legend_pal, values = legend_val, title = paste0("Temperature Deviation", "<br>", "from Mean"),  labFormat = labelFormat(prefix = " "))# %>% 
   #addLayersControl(baseGroups = c("Citywide", "Residential Only"),options = layersControlOptions(collapsed = FALSE), position = "bottomright")
 

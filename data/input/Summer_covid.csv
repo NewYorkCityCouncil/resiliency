@@ -1,178 +1,178 @@
-"","MODIFIED_ZCTA","NEIGHBORHOOD_NAME","BOROUGH_GROUP","COVID_CASE_RATE"
-"1","10001","Chelsea/NoMad/West Chelsea","Manhattan",1699.7
-"2","10002","Chinatown/Lower East Side","Manhattan",1545.82
-"3","10003","East Village/Gramercy/Greenwich Village","Manhattan",918.185
-"4","10004","Financial District","Manhattan",972.44
-"5","10005","Financial District","Manhattan",929.005
-"6","10006","Financial District","Manhattan",954.375
-"7","10007","TriBeCa","Manhattan",769.725
-"8","10009","Alphabet City/East Village/Stuyvesant Town-Cooper Village","Manhattan",1297.915
-"9","10010","Flatiron/Gramercy/Kips Bay","Manhattan",931.365
-"10","10011","Chelsea","Manhattan",1158.57
-"11","10012","Greenwich Village/SoHo","Manhattan",794.375
-"12","10013","Hudson Square/Little Italy/SoHo/TriBeCa","Manhattan",1010.985
-"13","10014","Hudson Square/Meatpacking District/West Village","Manhattan",1087.195
-"14","10016","Kips Bay/Murray Hill/NoMad","Manhattan",1444.09
-"15","10017","East Midtown/Murray Hill","Manhattan",954.91
-"16","10018","Hell's Kitchen/Midtown Manhattan","Manhattan",2203.235
-"17","10019","Hell's Kitchen/Midtown Manhattan","Manhattan",1589.9
-"18","10021","Lenox Hill/Upper East Side","Manhattan",1348.025
-"19","10022","East Midtown","Manhattan",1214.775
-"20","10023","Lincoln Square","Manhattan",1006.225
-"21","10024","Upper West Side","Manhattan",1318.505
-"22","10025","Manhattan Valley/Morningside Heights/Upper West Side","Manhattan",1540.61
-"23","10026","Central Harlem (South)","Manhattan",1782.51
-"24","10027","Central Harlem (South)/Morningside Heights/West Harlem","Manhattan",1728.715
-"25","10028","Upper East Side/Yorkville","Manhattan",1030.41
-"26","10029","East Harlem","Manhattan",2429.56
-"27","10030","Central Harlem (North)","Manhattan",1814.345
-"28","10031","Hamilton Heights/West Harlem","Manhattan",2333.345
-"29","10032","Washington Heights (South)","Manhattan",2649.91
-"30","10033","Washington Heights (North)/Washington Heights (South)","Manhattan",2410.895
-"31","10034","Inwood/Washington Heights (North)","Manhattan",1825.94
-"32","10035","East Harlem","Manhattan",3000.58
-"33","10036","Hell's Kitchen/Midtown Manhattan","Manhattan",1774.05
-"34","10037","Central Harlem (North)/East Harlem","Manhattan",2714.335
-"35","10038","Chinatown/Financial District","Manhattan",1242.745
-"36","10039","Central Harlem (North)/Washington Heights (South)","Manhattan",2131.72
-"37","10040","Washington Heights (North)","Manhattan",2671.38
-"38","10044","Roosevelt Island","Manhattan",2106.785
-"39","10065","Lenox Hill/Upper East Side","Manhattan",1185.42
-"40","10069","Lincoln Square","Manhattan",993.985
-"41","10075","Lenox Hill/Upper East Side","Manhattan",1829.98
-"42","10128","Upper East Side/Yorkville","Manhattan",1097.765
-"43","10280","Battery Park City","Manhattan",592.595
-"44","10282","Battery Park City","Manhattan",1405.145
-"45","10301","Silver Lake/St. George","Staten Island",3146.65
-"46","10302","Elm Park","Staten Island",3515.5
-"47","10303","Graniteville/Mariner's Harbor/Port Ivory","Staten Island",3436.69
-"48","10304","New Dorp/Todt Hill","Staten Island",3425.31
-"49","10305","Arrochar/Midland Beach/Shore Acres/South Beach Ocean Breeze","Staten Island",3053.265
-"50","10306","Lighthouse Hill/Midland Beach/New Dorp/Oakwood","Staten Island",2808.015
-"51","10307","Tottenville","Staten Island",2606.055
-"52","10308","Great Kills","Staten Island",2267.565
-"53","10309","Charleston/Prince's Bay/Woodrow","Staten Island",2649.6
-"54","10310","Port Richmond/Randall Manor/West Brighton","Staten Island",3102.095
-"55","10312","Annadale/Rossville","Staten Island",2625.015
-"56","10314","Bloomfield/Freshkills Park","Staten Island",3037.95
-"57","10451","Concourse/Melrose","Bronx",3500.72
-"58","10452","Concourse/Highbridge","Bronx",3319.92
-"59","10453","Morris Heights/Mount Hope/University Heights","Bronx",3124.38
-"60","10454","Mott Haven/Port Morris","Bronx",3142.055
-"61","10455","Mott Haven","Bronx",3234.19
-"62","10456","Claremont/Morrisania","Bronx",2844.55
-"63","10457","Belmont/Claremont/Mount Hope/Tremont","Bronx",3058.175
-"64","10458","Belmont/Fordham University/Kingsbridge","Bronx",2654.89
-"65","10459","Charlotte Gardens/Hunts Point","Bronx",3261.325
-"66","10460","Charlotte Gardens/Tremont/Van Nest/West Farms","Bronx",2924.765
-"67","10461","Morris Park/Pelham Bay/Westchester Square","Bronx",3887.465
-"68","10462","Parkchester/Pelham Parkway/Van Nest/Westchester Square","Bronx",3078.915
-"69","10463","Kingsbridge/Marble Hill/Riverdale/Spuyten Duyvil","Bronx",2984.4
-"70","10464","City Island","Bronx",2905.94
-"71","10465","Country Club/Throgs Neck","Bronx",3570.725
-"72","10466","Edenwald/Wakefield","Bronx",3462.815
-"73","10467","Allerton/Norwood/Pelham Parkway/Williamsbridge","Bronx",3548.18
-"74","10468","Fordham/Kingsbridge/University Heights","Bronx",3808.63
-"75","10469","Allerton/Baychester/Pelham Gardens/Williamsbridge","Bronx",4343.555
-"76","10470","Wakefield/Woodlawn","Bronx",3332.445
-"77","10471","Fieldston/North Riverdale/Riverdale","Bronx",3864.025
-"78","10472","Soundview","Bronx",3062.7
-"79","10473","Castle Hill/Clason Point/Soundview","Bronx",3296.715
-"80","10474","Hunts Point","Bronx",2709.425
-"81","10475","Co-op City/Edenwald","Bronx",4054.345
-"82","11004","Bellerose/Douglaston-Little Neck","Queens",3214.535
-"83","11101","Astoria (South)/Long Island City/Sunnyside","Queens",1938.695
-"84","11102","Astoria (North)","Queens",2025.56
-"85","11103","Astoria (North)/Astoria (South)","Queens",1680.99
-"86","11104","Sunnyside","Queens",2114.98
-"87","11105","Ditmars Steinway","Queens",1451.465
-"88","11106","Astoria (South)","Queens",1825.965
-"89","11109","Long Island City","Queens",1104.4
-"90","11201","Brooklyn Heights/DUMBO/Downtown Brooklyn","Brooklyn",1250.24
-"91","11203","East Flatbush (North)/East Flatbush (South)","Brooklyn",2922.645
-"92","11204","Bensonhurst/Mapleton","Brooklyn",2694.07
-"93","11205","Bedford-Stuyvesant (West)/Clinton Hill/Fort Greene","Brooklyn",1763.11
-"94","11206","Williamsburg (South)","Brooklyn",1991.895
-"95","11207","Cypress Hills/East New York","Brooklyn",2487.755
-"96","11208","Cypress Hills/East New York","Brooklyn",2649.895
-"97","11209","Bay Ridge/Fort Hamilton","Brooklyn",1801.55
-"98","11210","Flatlands/Midwood","Brooklyn",2646.47
-"99","11211","East Williamsburg/Williamsburg (North)/Williamsburg (South)","Brooklyn",2213.47
-"100","11212","Ocean Hill-Brownsville","Brooklyn",2490.26
-"101","11213","Crown Heights (East)","Brooklyn",2289.45
-"102","11214","Bath Beach/Bensonhurst/Gravesend","Brooklyn",1753.93
-"103","11215","Gowanus/Park Slope/Windsor Terrace","Brooklyn",944.485
-"104","11216","Bedford-Stuyvesant (West)/Crown Heights (West)","Brooklyn",1430.56
-"105","11217","Boerum Hill/Park Slope","Brooklyn",1388.05
-"106","11218","Kensington/Windsor Terrace","Brooklyn",2381.065
-"107","11219","Borough Park","Brooklyn",3414.885
-"108","11220","Sunset Park","Brooklyn",1776.535
-"109","11221","Bedford-Stuyvesant (East)/Bushwick","Brooklyn",1737.43
-"110","11222","Greenpoint","Brooklyn",1348.035
-"111","11223","Gravesend/Homecrest","Brooklyn",2254.335
-"112","11224","Brighton Beach/Coney Island/Seagate","Brooklyn",2807.54
-"113","11225","Crown Heights (West)/Prospect Lefferts Gardens","Brooklyn",2100.1
-"114","11226","Flatbush/Prospect Lefferts Gardens","Brooklyn",2424.255
-"115","11228","Bath Beach/Dyker Heights","Brooklyn",1620.485
-"116","11229","Gerritsen Beach/Homecrest/Sheepshead Bay","Brooklyn",2195.29
-"117","11230","Midwood","Brooklyn",2776.29
-"118","11231","Carroll Gardens/Cobble Hill/Red Hook","Brooklyn",1213.69
-"119","11232","Sunset Park","Brooklyn",2055.105
-"120","11233","Bedford-Stuyvesant (East)/Ocean Hill-Brownsville","Brooklyn",1857.36
-"121","11234","Bergen Beach/Flatlands/Marine Park/Mill Basin","Brooklyn",2461.05
-"122","11235","Brighton Beach/Manhattan Beach/Sheepshead Bay","Brooklyn",2720.01
-"123","11236","Canarsie","Brooklyn",2935.04
-"124","11237","Bushwick/East Williamsburg","Brooklyn",2056.385
-"125","11238","Clinton Hill/Prospect Heights","Brooklyn",1541.22
-"126","11239","East New York","Brooklyn",4382.375
-"127","11354","Flushing/Murray Hill","Queens",2324.455
-"128","11355","Flushing/Murray Hill/Queensboro Hill","Queens",1775.315
-"129","11356","College Point","Queens",2555.445
-"130","11357","Whitestone","Queens",2160.07
-"131","11358","Auburndale/Murray Hill","Queens",1688.17
-"132","11360","Bayside (North)","Queens",1738.835
-"133","11361","Bayside (North)/Bayside (South)","Queens",1689.19
-"134","11362","Douglaston-Little Neck","Queens",1868.87
-"135","11363","Douglaston-Little Neck","Queens",1452.71
-"136","11364","Bayside (South)/Oakland Gardens","Queens",1407.595
-"137","11365","Auburndale/Fresh Meadows/Pomonok/Utopia","Queens",2011.315
-"138","11366","Fresh Meadows/Hillcrest","Queens",2928.71
-"139","11367","Kew Gardens Hills/Pomonok","Queens",2595.195
-"140","11368","Corona/North Corona","Queens",4278.9
-"141","11369","Airport/East Elmhurst","Queens",4545.8
-"142","11370","Jackson Heights/Rikers Island","Queens",4205
-"143","11372","Jackson Heights","Queens",4230.145
-"144","11373","Elmhurst","Queens",3611.81
-"145","11374","Rego Park","Queens",2679.105
-"146","11375","Forest Hills","Queens",2200.475
-"147","11377","Woodside","Queens",2709.08
-"148","11378","Maspeth","Queens",2233.08
-"149","11379","Middle Village","Queens",2330.395
-"150","11385","Glendale/Ridgewood","Queens",2217.04
-"151","11411","Cambria Heights","Queens",3425.345
-"152","11412","St. Albans","Queens",3241.68
-"153","11413","Laurelton/Rosedale","Queens",3108.965
-"154","11414","Hamilton Beach/Howard Beach/Lindenwood","Queens",2952.355
-"155","11415","Kew Gardens","Queens",2864.685
-"156","11416","Ozone Park","Queens",2802.99
-"157","11417","Ozone Park","Queens",2929.265
-"158","11418","Richmond Hill","Queens",2989.095
-"159","11419","Richmond Hill/South Ozone Park","Queens",2450.405
-"160","11420","South Ozone Park","Queens",2932.93
-"161","11421","Woodhaven","Queens",2949.57
-"162","11422","Rosedale","Queens",3027.73
-"163","11423","Hollis/Holliswood","Queens",3483.025
-"164","11426","Bellerose","Queens",2526.605
-"165","11427","Bellerose/Hollis Hills/Holliswood","Queens",3480.9
-"166","11428","Queens Village","Queens",3572.64
-"167","11429","Queens Village","Queens",3488.335
-"168","11432","Hillcrest/Jamaica Estates/Jamaica Hills","Queens",2996.26
-"169","11433","Jamaica","Queens",2741.72
-"170","11434","Airport/South Jamaica/Springfield Gardens/St. Albans","Queens",3190.885
-"171","11435","Briarwood/Jamaica","Queens",2931.65
-"172","11436","South Jamaica/South Ozone Park","Queens",2633.675
-"173","11691","Edgemere/Far Rockaway","Queens",3837.305
-"174","11692","Arverne/Edgemere","Queens",3208.21
-"175","11693","Arverne/Broad Channel","Queens",2725.89
-"176","11694","Belle Harbor-Neponsit/Rockaway Park","Queens",3640.24
-"177","11697","Breezy Point","Queens",3138.53
+"MODIFIED_ZCTA","NEIGHBORHOOD_NAME","BOROUGH_GROUP","COVID_CASE_RATE"
+"10001","Chelsea/NoMad/West Chelsea","Manhattan",1699.7
+"10002","Chinatown/Lower East Side","Manhattan",1545.82
+"10003","East Village/Gramercy/Greenwich Village","Manhattan",918.185
+"10004","Financial District","Manhattan",972.44
+"10005","Financial District","Manhattan",929.005
+"10006","Financial District","Manhattan",954.375
+"10007","TriBeCa","Manhattan",769.725
+"10009","Alphabet City/East Village/Stuyvesant Town-Cooper Village","Manhattan",1297.915
+"10010","Flatiron/Gramercy/Kips Bay","Manhattan",931.365
+"10011","Chelsea","Manhattan",1158.57
+"10012","Greenwich Village/SoHo","Manhattan",794.375
+"10013","Hudson Square/Little Italy/SoHo/TriBeCa","Manhattan",1010.985
+"10014","Hudson Square/Meatpacking District/West Village","Manhattan",1087.195
+"10016","Kips Bay/Murray Hill/NoMad","Manhattan",1444.09
+"10017","East Midtown/Murray Hill","Manhattan",954.91
+"10018","Hell's Kitchen/Midtown Manhattan","Manhattan",2203.235
+"10019","Hell's Kitchen/Midtown Manhattan","Manhattan",1589.9
+"10021","Lenox Hill/Upper East Side","Manhattan",1348.025
+"10022","East Midtown","Manhattan",1214.775
+"10023","Lincoln Square","Manhattan",1006.225
+"10024","Upper West Side","Manhattan",1318.505
+"10025","Manhattan Valley/Morningside Heights/Upper West Side","Manhattan",1540.61
+"10026","Central Harlem (South)","Manhattan",1782.51
+"10027","Central Harlem (South)/Morningside Heights/West Harlem","Manhattan",1728.715
+"10028","Upper East Side/Yorkville","Manhattan",1030.41
+"10029","East Harlem","Manhattan",2429.56
+"10030","Central Harlem (North)","Manhattan",1814.345
+"10031","Hamilton Heights/West Harlem","Manhattan",2333.345
+"10032","Washington Heights (South)","Manhattan",2649.91
+"10033","Washington Heights (North)/Washington Heights (South)","Manhattan",2410.895
+"10034","Inwood/Washington Heights (North)","Manhattan",1825.94
+"10035","East Harlem","Manhattan",3000.58
+"10036","Hell's Kitchen/Midtown Manhattan","Manhattan",1774.05
+"10037","Central Harlem (North)/East Harlem","Manhattan",2714.335
+"10038","Chinatown/Financial District","Manhattan",1242.745
+"10039","Central Harlem (North)/Washington Heights (South)","Manhattan",2131.72
+"10040","Washington Heights (North)","Manhattan",2671.38
+"10044","Roosevelt Island","Manhattan",2106.785
+"10065","Lenox Hill/Upper East Side","Manhattan",1185.42
+"10069","Lincoln Square","Manhattan",993.985
+"10075","Lenox Hill/Upper East Side","Manhattan",1829.98
+"10128","Upper East Side/Yorkville","Manhattan",1097.765
+"10280","Battery Park City","Manhattan",592.595
+"10282","Battery Park City","Manhattan",1405.145
+"10301","Silver Lake/St. George","Staten Island",3146.65
+"10302","Elm Park","Staten Island",3515.5
+"10303","Graniteville/Mariner's Harbor/Port Ivory","Staten Island",3436.69
+"10304","New Dorp/Todt Hill","Staten Island",3425.31
+"10305","Arrochar/Midland Beach/Shore Acres/South Beach Ocean Breeze","Staten Island",3053.265
+"10306","Lighthouse Hill/Midland Beach/New Dorp/Oakwood","Staten Island",2808.015
+"10307","Tottenville","Staten Island",2606.055
+"10308","Great Kills","Staten Island",2267.565
+"10309","Charleston/Prince's Bay/Woodrow","Staten Island",2649.6
+"10310","Port Richmond/Randall Manor/West Brighton","Staten Island",3102.095
+"10312","Annadale/Rossville","Staten Island",2625.015
+"10314","Bloomfield/Freshkills Park","Staten Island",3037.95
+"10451","Concourse/Melrose","Bronx",3500.72
+"10452","Concourse/Highbridge","Bronx",3319.92
+"10453","Morris Heights/Mount Hope/University Heights","Bronx",3124.38
+"10454","Mott Haven/Port Morris","Bronx",3142.055
+"10455","Mott Haven","Bronx",3234.19
+"10456","Claremont/Morrisania","Bronx",2844.55
+"10457","Belmont/Claremont/Mount Hope/Tremont","Bronx",3058.175
+"10458","Belmont/Fordham University/Kingsbridge","Bronx",2654.89
+"10459","Charlotte Gardens/Hunts Point","Bronx",3261.325
+"10460","Charlotte Gardens/Tremont/Van Nest/West Farms","Bronx",2924.765
+"10461","Morris Park/Pelham Bay/Westchester Square","Bronx",3887.465
+"10462","Parkchester/Pelham Parkway/Van Nest/Westchester Square","Bronx",3078.915
+"10463","Kingsbridge/Marble Hill/Riverdale/Spuyten Duyvil","Bronx",2984.4
+"10464","City Island","Bronx",2905.94
+"10465","Country Club/Throgs Neck","Bronx",3570.725
+"10466","Edenwald/Wakefield","Bronx",3462.815
+"10467","Allerton/Norwood/Pelham Parkway/Williamsbridge","Bronx",3548.18
+"10468","Fordham/Kingsbridge/University Heights","Bronx",3808.63
+"10469","Allerton/Baychester/Pelham Gardens/Williamsbridge","Bronx",4343.555
+"10470","Wakefield/Woodlawn","Bronx",3332.445
+"10471","Fieldston/North Riverdale/Riverdale","Bronx",3864.025
+"10472","Soundview","Bronx",3062.7
+"10473","Castle Hill/Clason Point/Soundview","Bronx",3296.715
+"10474","Hunts Point","Bronx",2709.425
+"10475","Co-op City/Edenwald","Bronx",4054.345
+"11004","Bellerose/Douglaston-Little Neck","Queens",3214.535
+"11101","Astoria (South)/Long Island City/Sunnyside","Queens",1938.695
+"11102","Astoria (North)","Queens",2025.56
+"11103","Astoria (North)/Astoria (South)","Queens",1680.99
+"11104","Sunnyside","Queens",2114.98
+"11105","Ditmars Steinway","Queens",1451.465
+"11106","Astoria (South)","Queens",1825.965
+"11109","Long Island City","Queens",1104.4
+"11201","Brooklyn Heights/DUMBO/Downtown Brooklyn","Brooklyn",1250.24
+"11203","East Flatbush (North)/East Flatbush (South)","Brooklyn",2922.645
+"11204","Bensonhurst/Mapleton","Brooklyn",2694.07
+"11205","Bedford-Stuyvesant (West)/Clinton Hill/Fort Greene","Brooklyn",1763.11
+"11206","Williamsburg (South)","Brooklyn",1991.895
+"11207","Cypress Hills/East New York","Brooklyn",2487.755
+"11208","Cypress Hills/East New York","Brooklyn",2649.895
+"11209","Bay Ridge/Fort Hamilton","Brooklyn",1801.55
+"11210","Flatlands/Midwood","Brooklyn",2646.47
+"11211","East Williamsburg/Williamsburg (North)/Williamsburg (South)","Brooklyn",2213.47
+"11212","Ocean Hill-Brownsville","Brooklyn",2490.26
+"11213","Crown Heights (East)","Brooklyn",2289.45
+"11214","Bath Beach/Bensonhurst/Gravesend","Brooklyn",1753.93
+"11215","Gowanus/Park Slope/Windsor Terrace","Brooklyn",944.485
+"11216","Bedford-Stuyvesant (West)/Crown Heights (West)","Brooklyn",1430.56
+"11217","Boerum Hill/Park Slope","Brooklyn",1388.05
+"11218","Kensington/Windsor Terrace","Brooklyn",2381.065
+"11219","Borough Park","Brooklyn",3414.885
+"11220","Sunset Park","Brooklyn",1776.535
+"11221","Bedford-Stuyvesant (East)/Bushwick","Brooklyn",1737.43
+"11222","Greenpoint","Brooklyn",1348.035
+"11223","Gravesend/Homecrest","Brooklyn",2254.335
+"11224","Brighton Beach/Coney Island/Seagate","Brooklyn",2807.54
+"11225","Crown Heights (West)/Prospect Lefferts Gardens","Brooklyn",2100.1
+"11226","Flatbush/Prospect Lefferts Gardens","Brooklyn",2424.255
+"11228","Bath Beach/Dyker Heights","Brooklyn",1620.485
+"11229","Gerritsen Beach/Homecrest/Sheepshead Bay","Brooklyn",2195.29
+"11230","Midwood","Brooklyn",2776.29
+"11231","Carroll Gardens/Cobble Hill/Red Hook","Brooklyn",1213.69
+"11232","Sunset Park","Brooklyn",2055.105
+"11233","Bedford-Stuyvesant (East)/Ocean Hill-Brownsville","Brooklyn",1857.36
+"11234","Bergen Beach/Flatlands/Marine Park/Mill Basin","Brooklyn",2461.05
+"11235","Brighton Beach/Manhattan Beach/Sheepshead Bay","Brooklyn",2720.01
+"11236","Canarsie","Brooklyn",2935.04
+"11237","Bushwick/East Williamsburg","Brooklyn",2056.385
+"11238","Clinton Hill/Prospect Heights","Brooklyn",1541.22
+"11239","East New York","Brooklyn",4382.375
+"11354","Flushing/Murray Hill","Queens",2324.455
+"11355","Flushing/Murray Hill/Queensboro Hill","Queens",1775.315
+"11356","College Point","Queens",2555.445
+"11357","Whitestone","Queens",2160.07
+"11358","Auburndale/Murray Hill","Queens",1688.17
+"11360","Bayside (North)","Queens",1738.835
+"11361","Bayside (North)/Bayside (South)","Queens",1689.19
+"11362","Douglaston-Little Neck","Queens",1868.87
+"11363","Douglaston-Little Neck","Queens",1452.71
+"11364","Bayside (South)/Oakland Gardens","Queens",1407.595
+"11365","Auburndale/Fresh Meadows/Pomonok/Utopia","Queens",2011.315
+"11366","Fresh Meadows/Hillcrest","Queens",2928.71
+"11367","Kew Gardens Hills/Pomonok","Queens",2595.195
+"11368","Corona/North Corona","Queens",4278.9
+"11369","Airport/East Elmhurst","Queens",4545.8
+"11370","Jackson Heights/Rikers Island","Queens",4205
+"11372","Jackson Heights","Queens",4230.145
+"11373","Elmhurst","Queens",3611.81
+"11374","Rego Park","Queens",2679.105
+"11375","Forest Hills","Queens",2200.475
+"11377","Woodside","Queens",2709.08
+"11378","Maspeth","Queens",2233.08
+"11379","Middle Village","Queens",2330.395
+"11385","Glendale/Ridgewood","Queens",2217.04
+"11411","Cambria Heights","Queens",3425.345
+"11412","St. Albans","Queens",3241.68
+"11413","Laurelton/Rosedale","Queens",3108.965
+"11414","Hamilton Beach/Howard Beach/Lindenwood","Queens",2952.355
+"11415","Kew Gardens","Queens",2864.685
+"11416","Ozone Park","Queens",2802.99
+"11417","Ozone Park","Queens",2929.265
+"11418","Richmond Hill","Queens",2989.095
+"11419","Richmond Hill/South Ozone Park","Queens",2450.405
+"11420","South Ozone Park","Queens",2932.93
+"11421","Woodhaven","Queens",2949.57
+"11422","Rosedale","Queens",3027.73
+"11423","Hollis/Holliswood","Queens",3483.025
+"11426","Bellerose","Queens",2526.605
+"11427","Bellerose/Hollis Hills/Holliswood","Queens",3480.9
+"11428","Queens Village","Queens",3572.64
+"11429","Queens Village","Queens",3488.335
+"11432","Hillcrest/Jamaica Estates/Jamaica Hills","Queens",2996.26
+"11433","Jamaica","Queens",2741.72
+"11434","Airport/South Jamaica/Springfield Gardens/St. Albans","Queens",3190.885
+"11435","Briarwood/Jamaica","Queens",2931.65
+"11436","South Jamaica/South Ozone Park","Queens",2633.675
+"11691","Edgemere/Far Rockaway","Queens",3837.305
+"11692","Arverne/Edgemere","Queens",3208.21
+"11693","Arverne/Broad Channel","Queens",2725.89
+"11694","Belle Harbor-Neponsit/Rockaway Park","Queens",3640.24
+"11697","Breezy Point","Queens",3138.53

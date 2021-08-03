@@ -144,6 +144,11 @@ heat_pal <- colorNumeric(rev(colorRamps::matlab.like(15)), domain = values(kde_h
 
 case_rate_pal <- colorBin("Oranges", bins = round(natural.interval), domain = all_rates$all_rate_values)
 
+zip_popup  <-  paste0("Zip Code: ", zip_covid$modified_zcta, "<br>",
+                      "Jun - Aug 2020 Case Rate: ", zip_covid$monthly_covid_case_rate_summ_20, "<br>",
+                      "Jun - Jul 2021 Case Rate: ", zip_covid$monthly_covid_case_rate_summ_21, "<br>",
+                      "Jun 2020 - Jul 2021 Case Rate: ", zip_covid$monthly_covid_case_rate_summ_20_present)
+
 
 
 # Map ---------------------------------------------------------------------
@@ -151,19 +156,22 @@ case_rate_pal <- colorBin("Oranges", bins = round(natural.interval), domain = al
 covid_heat_overlay <- leaflet(options = leafletOptions(zoomControl = FALSE, minZoom = 10, maxZoom = 16)) %>%
   addProviderTiles('CartoDB.Positron', options = providerTileOptions(minZoom = 10, maxZoom = 14)) %>%
   addRasterImage(kde_heat_crop, colors = heat_pal, opacity = 0.4, group = "Surface Tempterature Map") %>% 
-  addPolygons(data = zip_covid, weight = 1, fillOpacity = .8, 
+  addPolygons(data = zip_covid, weight = 1, fillOpacity = .73, 
               fillColor = case_rate_pal(zip_covid$monthly_covid_case_rate_summ_20_present),
-              group = "June 1 2020 to July 31 2021 Cases") %>% 
-  addPolygons(data = zip_covid, weight = 1, fillOpacity = .8, 
+              popup = ~zip_popup,
+              group = "June 1 2020 to July 31 2021 Case Rate") %>% 
+  addPolygons(data = zip_covid, weight = 1, fillOpacity = .73, 
               fillColor = case_rate_pal(zip_covid$monthly_covid_case_rate_summ_20),
-              group = "June 1 2020 to August 31 2021 Cases") %>% 
-  addPolygons(data = zip_covid, weight = 1, fillOpacity = .8, 
+              popup = ~zip_popup,
+              group = "June 1 2020 to August 31 2021 Case Rate") %>% 
+  addPolygons(data = zip_covid, weight = 1, fillOpacity = .73, 
               fillColor = case_rate_pal(zip_covid$monthly_covid_case_rate_summ_21),
-              group = "June 1 2021 to July 31 2021 Cases") %>% 
+              popup = ~zip_popup,
+              group = "June 1 2021 to July 31 2021 Case Rate") %>% 
   addLayersControl(baseGroups = c("Surface Tempterature Map",
-                                  "June 1 2020 to July 31 2021 Cases", 
-                                  "June 1 2020 to August 31 2021 Cases",
-                                  "June 1 2021 to July 31 2021 Cases"),
+                                  "June 1 2020 to July 31 2021 Case Rate", 
+                                  "June 1 2020 to August 31 2021 Case Rate",
+                                  "June 1 2021 to July 31 2021 Case Rate"),
                    options = layersControlOptions(collapsed = FALSE),
                    position = "bottomright") %>% 
   addLegend(pal = case_rate_pal,

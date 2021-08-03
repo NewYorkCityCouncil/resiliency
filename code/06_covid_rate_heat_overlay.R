@@ -163,14 +163,14 @@ covid_heat_overlay <- leaflet(options = leafletOptions(zoomControl = FALSE, minZ
   addPolygons(data = zip_covid, weight = 1, fillOpacity = .73, 
               fillColor = case_rate_pal(zip_covid$monthly_covid_case_rate_summ_20),
               popup = ~zip_popup,
-              group = "June 1 2020 to August 31 2021 Case Rate") %>% 
+              group = "June 1 2020 to August 31 2020 Case Rate") %>% 
   addPolygons(data = zip_covid, weight = 1, fillOpacity = .73, 
               fillColor = case_rate_pal(zip_covid$monthly_covid_case_rate_summ_21),
               popup = ~zip_popup,
               group = "June 1 2021 to July 31 2021 Case Rate") %>% 
   addLayersControl(baseGroups = c("Surface Tempterature Map",
                                   "June 1 2020 to July 31 2021 Case Rate", 
-                                  "June 1 2020 to August 31 2021 Case Rate",
+                                  "June 1 2020 to August 31 2020 Case Rate",
                                   "June 1 2021 to July 31 2021 Case Rate"),
                    options = layersControlOptions(collapsed = FALSE),
                    position = "bottomright") %>% 

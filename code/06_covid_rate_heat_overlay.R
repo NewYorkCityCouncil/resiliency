@@ -170,7 +170,7 @@ covid_heat_overlay <- leaflet(options = leafletOptions(zoomControl = FALSE, minZ
             values = natural.interval,
             position = "topleft",
             opacity = .8,
-            title = "Average Monthly Case Rate")
+            title = paste0("Average Monthly Case", "<br>", "Rate (Per 100,000)"))
   
 
 covid_heat_overlay

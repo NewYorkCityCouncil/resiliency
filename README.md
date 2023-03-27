@@ -1,4 +1,9 @@
-# resiliency
+# Update!
+
+This repo is outdated and will be archived in the future. Please refer to our new [repo](https://github.com/NewYorkCityCouncil/heat_map), which contains updated data, methodology, and implementation for the NYC Heat Map (Surface Temperature). 
+
+## Resiliency. 
+
 for resiliency sustainability group - looking at heat and flooding areas
 
 We are focusing on the summer months from 2014 to 2019 in NYC.
